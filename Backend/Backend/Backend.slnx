@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Customers/">
+    <Project Path="Mod.Customers.Application/Mod.Customers.Application.csproj" Id="9a97107d-cfc1-4c96-96f2-f31ab4a71c9d" />
+    <Project Path="Mod.Customers.Domain/Mod.Customers.Domain.csproj" Id="88e23c44-2e82-424f-a9ff-d7647c2dda80" />
+    <Project Path="Mod.Customers.Infrastructure/Mod.Customers.Infrastructure.csproj" Id="0eb7791e-5a77-47d9-86fc-3578aa2f091a" />
+  </Folder>
+  <Folder Name="/Modules/Products/">
+    <Project Path="Mod.Products.Application/Mod.Products.Application.csproj" Id="211847e9-ed6d-4ea2-b6f1-0121e60d8684" />
+    <Project Path="Mod.Products.Domain/Mod.Products.Domain.csproj" Id="f6848de9-30fd-49cb-8200-29e1b53ce8bb" />
+    <Project Path="Mod.Products.Infrastructure/Mod.Products.Infrastructure.csproj" Id="3376523f-5d33-4994-add5-aab2d65783e3" />
+  </Folder>
+  <Folder Name="/Modules/Sales/">
+    <Project Path="Mod.Sales.Application/Mod.Sales.Application.csproj" Id="45ef3bc6-5c8a-4e30-8e3b-12a47301d04c" />
+    <Project Path="Mod.Sales.Domain/Mod.Sales.Domain.csproj" Id="6805e515-1e66-416a-b0d4-185787b29cd2" />
+    <Project Path="Mod.Sales.Infrastructure/Mod.Sales.Infrastructure.csproj" Id="4723a729-1115-499d-82ba-efebdf4c5dc9" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="CommercialSystem.Shared/CommercialSystem.Shared.Persistence.csproj" Id="70bc8d1a-073b-442d-9eba-8a3855856a9d" />
+  </Folder>
+  <Project Path="Commerce.API/Commerce.API.csproj" Id="fed052fc-36a8-4117-8ee6-6ff95bec665c" />
+</Solution>
