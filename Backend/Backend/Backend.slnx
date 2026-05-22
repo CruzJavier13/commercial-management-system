@@ -1,9 +1,19 @@
 <Solution>
   <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Billing/">
+    <Project Path="Mod.Billing.Application/Mod.Billing.Application.csproj" Id="ceb25cdd-a208-45eb-aa53-2a6b396b9155" />
+    <Project Path="Mod.Billing.Domain/Mod.Billing.Domain.csproj" Id="0659fdf9-9a06-4bf7-bd2d-b4457c043512" />
+    <Project Path="Mod.Billing.Infrastructure/Mod.Billing.Infrastructure.csproj" Id="7866a777-8701-4352-bf3f-8be42998e21a" />
+  </Folder>
   <Folder Name="/Modules/Customers/">
     <Project Path="Mod.Customers.Application/Mod.Customers.Application.csproj" Id="9a97107d-cfc1-4c96-96f2-f31ab4a71c9d" />
     <Project Path="Mod.Customers.Domain/Mod.Customers.Domain.csproj" Id="88e23c44-2e82-424f-a9ff-d7647c2dda80" />
     <Project Path="Mod.Customers.Infrastructure/Mod.Customers.Infrastructure.csproj" Id="0eb7791e-5a77-47d9-86fc-3578aa2f091a" />
+  </Folder>
+  <Folder Name="/Modules/Inventory/">
+    <Project Path="Mod.Inventory.Application/Mod.Inventory.Application.csproj" Id="9575e0b8-4a78-4c3d-9ec9-3d896b0d2749" />
+    <Project Path="Mod.Inventory.Domain/Mod.Inventory.Domain.csproj" Id="97f2ec6e-68f3-424d-8d6b-8b66a18adbae" />
+    <Project Path="Mod.Inventory.Infrastructure/Mod.Inventory.Infrastructure.csproj" Id="da410c1b-5618-4b0d-917f-3ea48b070c4b" />
   </Folder>
   <Folder Name="/Modules/Products/">
     <Project Path="Mod.Products.Application/Mod.Products.Application.csproj" Id="211847e9-ed6d-4ea2-b6f1-0121e60d8684" />
