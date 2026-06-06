@@ -10,6 +10,11 @@
     <Project Path="Mod.Customers.Domain/Mod.Customers.Domain.csproj" Id="88e23c44-2e82-424f-a9ff-d7647c2dda80" />
     <Project Path="Mod.Customers.Infrastructure/Mod.Customers.Infrastructure.csproj" Id="0eb7791e-5a77-47d9-86fc-3578aa2f091a" />
   </Folder>
+  <Folder Name="/Modules/Employees/">
+    <Project Path="Mod.Emp.Application/Mod.Emp.Application.csproj" Id="c849d9a2-01a1-4f81-b940-9619f774c9b0" />
+    <Project Path="Mod.Emp.Domain/Mod.Emp.Domain.csproj" Id="8bd23d9a-60d6-4371-9c7a-b59e7434a011" />
+    <Project Path="Mod.Emp.Infrastructure/Mod.Emp.Infrastructure.csproj" Id="92b652a1-bc10-4854-ba39-a80ab10b0baf" />
+  </Folder>
   <Folder Name="/Modules/Inventory/">
     <Project Path="Mod.Inventory.Application/Mod.Inventory.Application.csproj" Id="9575e0b8-4a78-4c3d-9ec9-3d896b0d2749" />
     <Project Path="Mod.Inventory.Domain/Mod.Inventory.Domain.csproj" Id="97f2ec6e-68f3-424d-8d6b-8b66a18adbae" />

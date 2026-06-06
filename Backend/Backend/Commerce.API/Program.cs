@@ -1,7 +1,6 @@
 using CommercialSystem.Shared.Persistence.Database;
-using Mod.Products.Application.UseCases;
-using Mod.Products.Domain.Repositories;
-using Mod.Products.Infrastructure.Persistence;
+using Mod.Products.Infrastructure;
+using Mod.Emp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,17 +15,15 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Retrieve the connection string from appsettings.json
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
+builder.Services.AddSingleton<ISqlDbContext, SqlDbContext>();
 
-// Register the ISqlDbContext as Scoped (one instance per HTTP Request from Angular)
-builder.Services.AddScoped<ISqlDbContext>(provider => new SqlDbContext(connectionString));
 
 // Register Module Dependencies (Dependency Injection Mapping)
+// Employees Module
+builder.Services.AddEmployeesModule();
+
 // Products Module
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<CreateProductUseCase>();
+builder.Services.AddProductsModule();
 
 // Add services to the container.
 builder.Services.AddControllers();

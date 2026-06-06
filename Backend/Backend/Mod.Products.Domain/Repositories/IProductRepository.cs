@@ -7,7 +7,10 @@ namespace Mod.Products.Domain.Repositories
 {
     public interface IProductRepository
     {
-        void Save(Product product);
-        IEnumerable<Product> GetAll();
+        Task<int> SaveAsync(Product product);
+        Task<Product> GetByIdAsync(int id);
+        Task<IEnumerable<Product>> GetAllAsync();
+        Task<int> DeleteAsync(int id);
+        Task<int> UpdateAsync(Product product);
     }
 }

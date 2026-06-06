@@ -2,13 +2,7 @@
 
 namespace CommercialSystem.Shared.Persistence.Database;
 
-public interface ISqlDbContext : IDisposable
+public interface ISqlDbContext
 {
-    IDbConnection GetConnection();
-
-    IDbTransaction BeginTransaction();
-
-    void Commit();
-
-    void Rollback();
+    IDbConnection CreateConnection();
 }
