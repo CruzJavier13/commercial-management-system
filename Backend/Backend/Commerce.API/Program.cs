@@ -1,6 +1,11 @@
 using CommercialSystem.Shared.Persistence.Database;
 using Mod.Products.Infrastructure;
 using Mod.Emp.Infrastructure;
+using Mod.Customers.Infrastructure;
+using Mod.Billing.Infrastructure;
+using Mod.Inventory.Infrastructure;
+using Mod.Sales.Infrastructure;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +29,18 @@ builder.Services.AddEmployeesModule();
 
 // Products Module
 builder.Services.AddProductsModule();
+
+// Bills Module
+builder.Services.AddBillingModule();
+
+// Inventory Module
+builder.Services.AddInventoryModule();
+
+// Customers Module
+builder.Services.AddCustomersModule();
+
+// Sales Module
+builder.Services.AddSalesModule();
 
 // Add services to the container.
 builder.Services.AddControllers();
