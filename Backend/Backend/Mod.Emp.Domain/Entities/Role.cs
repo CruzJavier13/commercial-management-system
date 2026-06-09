@@ -13,6 +13,6 @@ namespace Mod.Emp.Domain.Entities
         public string? PasswordHash { get; set; }
         public bool IsActive { get; set; } = true;
         public virtual Employee Employee { get; set; } = null!;
-        public virtual Role Role { get; set; } = null!;
+        public virtual Role ParentRole { get; set; } = null!;
     }
 }

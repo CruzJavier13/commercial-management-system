@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommercialSystem.Shared.Domain\CommercialSystem.Shared.Domain.csproj" />
+    <ProjectReference Include="..\Mod.Billing.Domain\Mod.Billing.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

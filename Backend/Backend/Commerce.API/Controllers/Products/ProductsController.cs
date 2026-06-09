@@ -3,11 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Mod.Products.Application.DTOs;
 using Mod.Products.Application.UseCases;
 
-namespace Commerce.API.Controllers
+namespace Commerce.API.Controllers.Products
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+    [Route("api/products/")]
+    public class ProductsController : BaseApiController
     {
         private readonly CreateProductUseCase _createProductUseCase;
 

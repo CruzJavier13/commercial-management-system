@@ -1,10 +1,10 @@
-using CommercialSystem.Shared.Persistence.Database;
 using Mod.Products.Infrastructure;
 using Mod.Emp.Infrastructure;
 using Mod.Customers.Infrastructure;
 using Mod.Billing.Infrastructure;
 using Mod.Inventory.Infrastructure;
 using Mod.Sales.Infrastructure;
+using CommercialSystem.Shared.Persistence;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +20,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddSingleton<ISqlDbContext, SqlDbContext>();
+// Register shared database and infrastructure (Shared)
+builder.Services.AddSharedPersistence(builder.Configuration);
 
 
 // Register Module Dependencies (Dependency Injection Mapping)
@@ -31,7 +32,7 @@ builder.Services.AddEmployeesModule();
 builder.Services.AddProductsModule();
 
 // Bills Module
-builder.Services.AddBillingModule();
+builder.Services.AddBillingModule(builder.Configuration);
 
 // Inventory Module
 builder.Services.AddInventoryModule();

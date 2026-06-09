@@ -31,6 +31,7 @@
     <Project Path="Mod.Sales.Infrastructure/Mod.Sales.Infrastructure.csproj" Id="4723a729-1115-499d-82ba-efebdf4c5dc9" />
   </Folder>
   <Folder Name="/Shared/">
+    <Project Path="CommercialSystem.Shared.Domain/CommercialSystem.Shared.Domain.csproj" Id="73cc9469-4861-4e4e-b51b-ab266e32d9a2" />
     <Project Path="CommercialSystem.Shared/CommercialSystem.Shared.Persistence.csproj" Id="70bc8d1a-073b-442d-9eba-8a3855856a9d" />
   </Folder>
   <Project Path="Commerce.API/Commerce.API.csproj" Id="fed052fc-36a8-4117-8ee6-6ff95bec665c" />

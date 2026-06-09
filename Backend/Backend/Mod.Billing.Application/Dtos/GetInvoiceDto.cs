@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Mod.Billing.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mod.Billing.Domain.Entities
+namespace Mod.Billing.Application.Dtos
 {
-    public class Invoice
+    public class GetInvoiceDto
     {
         public int Id { get; set; }
         public string InvoiceNumber { get; set; } = string.Empty;
@@ -15,9 +16,7 @@ namespace Mod.Billing.Domain.Entities
         public decimal SubTotalAmount { get; set; }
         public decimal TotalBilled { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
-        public DateTime InvoiceDate { get; set; } = DateTime.UtcNow;
-
-        public List<InvoiceDetail> Details { get; set; } = new List<InvoiceDetail>();
-
+        public DateTime InvoiceDate { get; set; }
+        public List<GetInvoiceDetailDto> Details { get; set; } = new();
     }
 }

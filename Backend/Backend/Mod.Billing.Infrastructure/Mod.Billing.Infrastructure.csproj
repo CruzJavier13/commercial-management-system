@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommercialSystem.Shared\CommercialSystem.Shared.Persistence.csproj" />
+    <ProjectReference Include="..\Mod.Billing.Application\Mod.Billing.Application.csproj" />
+  </ItemGroup>
+
 </Project>

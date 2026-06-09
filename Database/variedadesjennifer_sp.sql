@@ -437,3 +437,248 @@ BEGIN
     END CATCH
 END;
 GO
+
+CREATE TYPE sal.OrderDetailType AS TABLE
+(
+    ProductId INT,
+    Quantity INT,
+    PriceAtSale DECIMAL(18,2)
+);
+GO
+
+CREATE PROCEDURE sal.sp_Order_Insert
+    @OrderNumber VARCHAR(50),
+    @CustomerId INT,
+    @EmployeeId INT,
+    @OrderStatus VARCHAR(20),
+    @SubTotal DECIMAL(18,2),
+    @Discount DECIMAL(18,2),
+    @TotalAmount DECIMAL(18,2),
+    @OrderDate DATETIME2,
+    @Details sal.OrderDetailType READONLY
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        INSERT INTO sal.Orders (OrderNumber, CustomerId, EmployeeId, OrderStatus, SubTotal, Discount, TotalAmount, OrderDate)
+        VALUES (@OrderNumber, @CustomerId, @EmployeeId, @OrderStatus, @SubTotal, @Discount, @TotalAmount, @OrderDate);
+
+        DECLARE @NewOrderId INT = SCOPE_IDENTITY();
+
+        INSERT INTO sal.OrderDetails (OrderId, ProductId, Quantity, PriceAtSale)
+        SELECT @NewOrderId, ProductId, Quantity, PriceAtSale
+        FROM @Details;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+CREATE PROCEDURE sal.sp_Order_Update
+    @Id INT,
+    @OrderNumber VARCHAR(50),
+    @CustomerId INT,
+    @EmployeeId INT,
+    @OrderStatus VARCHAR(20),
+    @SubTotal DECIMAL(18,2),
+    @Discount DECIMAL(18,2),
+    @TotalAmount DECIMAL(18,2),
+    @OrderDate DATETIME2,
+    @Details sal.OrderDetailType READONLY
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        UPDATE sal.Orders
+        SET OrderNumber = @OrderNumber, CustomerId = @CustomerId, EmployeeId = @EmployeeId, 
+            OrderStatus = @OrderStatus, SubTotal = @SubTotal, Discount = @Discount, 
+            TotalAmount = @TotalAmount, OrderDate = @OrderDate
+        WHERE Id = @Id;
+
+        DELETE FROM sal.OrderDetails WHERE OrderId = @Id;
+
+        INSERT INTO sal.OrderDetails (OrderId, ProductId, Quantity, PriceAtSale)
+        SELECT @Id, ProductId, Quantity, PriceAtSale
+        FROM @Details;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+CREATE PROCEDURE sal.sp_Order_Delete
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DELETE FROM sal.Orders WHERE Id = @Id;
+END;
+GO
+
+CREATE PROCEDURE sal.sp_Order_GetById
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, OrderNumber, CustomerId, EmployeeId, OrderStatus, SubTotal, Discount, TotalAmount, OrderDate 
+    FROM sal.Orders WHERE Id = @Id;
+
+    SELECT Id, OrderId, ProductId, Quantity, PriceAtSale, LineTotal 
+    FROM sal.OrderDetails WHERE OrderId = @Id;
+END;
+GO
+
+CREATE PROCEDURE sal.sp_Order_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, OrderNumber, CustomerId, EmployeeId, OrderStatus, SubTotal, Discount, TotalAmount, OrderDate 
+    FROM sal.Orders ORDER BY OrderDate DESC;
+END;
+GO
+
+CREATE PROCEDURE sal.sp_Order_GetByDate
+    @OrderDate DATETIME2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, OrderNumber, CustomerId, EmployeeId, OrderStatus, SubTotal, Discount, TotalAmount, OrderDate 
+    FROM sal.Orders 
+    WHERE CAST(OrderDate AS DATE) = CAST(@OrderDate AS DATE)
+    ORDER BY OrderDate DESC;
+END;
+GO
+
+CREATE TYPE bil.InvoiceDetailType AS TABLE
+(
+    ProductId INT,
+    Quantity INT,
+    PriceBilled DECIMAL(18,2),
+    TaxRate DECIMAL(5,2)
+);
+GO
+
+CREATE PROCEDURE bil.sp_Invoice_Insert
+    @InvoiceNumber VARCHAR(50),
+    @OrderId INT,
+    @CustomerId INT,
+    @EmployeeId INT,
+    @TaxAmount DECIMAL(18,2),
+    @SubTotalAmount DECIMAL(18,2),
+    @TotalBilled DECIMAL(18,2),
+    @PaymentMethod VARCHAR(20),
+    @InvoiceDate DATETIME2,
+    @Details bil.InvoiceDetailType READONLY
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        INSERT INTO bil.Invoices (InvoiceNumber, OrderId, CustomerId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate)
+        VALUES (@InvoiceNumber, @OrderId, @CustomerId, @TaxAmount, @SubTotalAmount, @TotalBilled, @PaymentMethod, @InvoiceDate);
+
+        DECLARE @NewInvoiceId INT = SCOPE_IDENTITY();
+
+        INSERT INTO bil.InvoiceDetails (InvoiceId, ProductId, Quantity, PriceBilled, TaxRate)
+        SELECT @NewInvoiceId, ProductId, Quantity, PriceBilled, TaxRate
+        FROM @Details;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+CREATE PROCEDURE bil.sp_Invoice_Update
+    @Id INT,
+    @InvoiceNumber VARCHAR(50),
+    @OrderId INT,
+    @CustomerId INT,
+    @EmployeeId INT,
+    @TaxAmount DECIMAL(18,2),
+    @SubTotalAmount DECIMAL(18,2),
+    @TotalBilled DECIMAL(18,2),
+    @PaymentMethod VARCHAR(20),
+    @InvoiceDate DATETIME2,
+    @Details bil.InvoiceDetailType READONLY
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        UPDATE bil.Invoices
+        SET InvoiceNumber = @InvoiceNumber, OrderId = @OrderId, CustomerId = @CustomerId, 
+            TaxAmount = @TaxAmount, SubTotalAmount = @SubTotalAmount, TotalBilled = @TotalBilled, 
+            PaymentMethod = @PaymentMethod, InvoiceDate = @InvoiceDate
+        WHERE Id = @Id;
+
+        DELETE FROM bil.InvoiceDetails WHERE InvoiceId = @Id;
+
+        INSERT INTO bil.InvoiceDetails (InvoiceId, ProductId, Quantity, PriceBilled, TaxRate)
+        SELECT @Id, ProductId, Quantity, PriceBilled, TaxRate
+        FROM @Details;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+CREATE PROCEDURE bil.sp_Invoice_Delete
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DELETE FROM bil.Invoices WHERE Id = @Id;
+END;
+GO
+
+CREATE PROCEDURE bil.sp_Invoice_GetById
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, InvoiceNumber, OrderId, CustomerId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate 
+    FROM bil.Invoices WHERE Id = @Id;
+
+    SELECT Id, InvoiceId, ProductId, Quantity, PriceBilled, TaxRate, LineTotal 
+    FROM bil.InvoiceDetails WHERE InvoiceId = @Id;
+END;
+GO
+
+CREATE PROCEDURE bil.sp_Invoice_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, InvoiceNumber, OrderId, CustomerId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate 
+    FROM bil.Invoices ORDER BY InvoiceDate DESC;
+END;
+GO
+
+CREATE PROCEDURE bil.sp_Invoice_GetByDate
+    @InvoiceDate DATETIME2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, InvoiceNumber, OrderId, CustomerId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate 
+    FROM bil.Invoices 
+    WHERE CAST(InvoiceDate AS DATE) = CAST(@InvoiceDate AS DATE)
+    ORDER BY InvoiceDate DESC;
+END;
+GO

@@ -18,14 +18,14 @@ public class CreateProductUseCase
         if (dto.Price <= 0)
             throw new ArgumentException("Product price must be greater than zero.");
 
-        var product = new Product
-        {
-            Code = dto.Code,
-            Name = dto.Name,
-            Price = dto.Price,
-            Stock = dto.Stock
-        };
+    //    var product = new Product
+    //    {
+    //        Code = dto.Code,
+    //        Name = dto.Name,
+    //        Price = dto.Price,
+    //        Stock = dto.Stock
+    //    };
 
-        _productRepository.Save(product);
+    //    _productRepository.Save(product);
     }
 }
