@@ -16,7 +16,7 @@ namespace Mod.Customers.Infrastructure.Persistence
         {
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
-        public async Task<int> SaveAsync(Customer t)
+        public async Task SaveAsync(Customer t)
         {
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
@@ -34,7 +34,7 @@ namespace Mod.Customers.Infrastructure.Persistence
             command.Parameters.AddWithValue("@IsActive", t.IsActive);
             command.Parameters.AddWithValue("@CreatedAt", t.CreatedAt);
 
-            return await command.ExecuteNonQueryAsync();
+            await command.ExecuteNonQueryAsync();
         }
         public async Task<Customer> UpdateAsync(Customer t, int id)
         {
