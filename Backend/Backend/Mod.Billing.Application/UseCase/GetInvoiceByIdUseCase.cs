@@ -32,7 +32,7 @@ namespace Mod.Billing.Application.UseCase
             {
                 Id = invoice.Id,
                 InvoiceNumber = invoice.InvoiceNumber,
-                OrderId = invoice.OrderId,
+                //OrderId = invoice.OrderId,
                 CustomerId = invoice.CustomerId,
                 EmployeeId = invoice.EmployeeId,
                 TaxAmount = invoice.TaxAmount,

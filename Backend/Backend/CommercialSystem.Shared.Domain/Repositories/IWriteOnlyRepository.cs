@@ -7,8 +7,8 @@ namespace CommercialSystem.Shared.Domain.Repositories
     public interface IWriteOnlyRepository<T> where T : class
     {
         Task SaveAsync(T t);
-        Task DeleteAsync(Guid id);
-        Task<T> UpdateAsync(T t, Guid id);
+        Task<int> DeleteAsync(int id);
+        Task<T> UpdateAsync(T t, int id);
       
     }
 }

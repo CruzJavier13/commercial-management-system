@@ -21,9 +21,12 @@ namespace Mod.Billing.Infrastructure
             services.AddScoped<IWriteOnlyRepository<Invoice>>(provider => new InvoiceRepository(connectionString));
             services.AddScoped<IReadOnlyRepository<Invoice>>(provider => new InvoiceRepository(connectionString));
 
-            services.AddScoped<CreateBillingUseCase>();
+            // Use cases
+            services.AddScoped<CreateInvoiceUseCase>();
             services.AddScoped<GetInvoiceByIdUseCase>();
-
+            services.AddScoped<GetAllInvoiceUseCase>();
+            services.AddScoped<DeleteInvoiceUseCase>();
+            services.AddScoped<UpdateInvoiceUseCase>();
 
             return services;
         }

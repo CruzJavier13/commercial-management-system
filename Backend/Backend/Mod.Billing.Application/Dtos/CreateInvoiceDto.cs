@@ -7,7 +7,7 @@ namespace Mod.Billing.Application.Dtos
     public class CreateInvoiceDto
     {
         public string InvoiceNumber { get; set; } = string.Empty;
-        public int OrderId { get; set; }
+        //public int OrderId { get; set; }
         public int CustomerId { get; set; }
         public int EmployeeId { get; set; }
         public decimal TaxAmount { get; set; }

@@ -14,8 +14,6 @@ CREATE SCHEMA prd; -- Module Products
 GO
 CREATE SCHEMA inv; -- Module Inventory
 GO
-CREATE SCHEMA sal; -- Module Sales
-GO
 CREATE SCHEMA bil; -- Module Billing
 GO
 
@@ -126,7 +124,8 @@ CREATE TABLE prd.MedicineAttributes (
     ActiveIngredient VARCHAR(150) NOT NULL, 
     ExpirationDateRequired BIT NOT NULL DEFAULT 1,
     RequiresPrescription BIT NOT NULL DEFAULT 0,
-    CONSTRAINT FK_MedicineAttributes_Products FOREIGN KEY (ProductId) REFERENCES prd.Products(Id) ON DELETE CASCADE
+    IsActive BIT NOT NULL DEFAULT 1,
+    --CONSTRAINT FK_MedicineAttributes_Products FOREIGN KEY (ProductId) REFERENCES prd.Products(Id) ON DELETE CASCADE
 );
 GO
 
@@ -175,41 +174,7 @@ GO
 CREATE INDEX IX_StockMovements_Product ON inv.StockMovements(ProductId);
 CREATE INDEX IX_StockMovements_Supplier ON inv.StockMovements(SupplierId);
 CREATE INDEX IX_StockMovements_Date ON inv.StockMovements(MovementDate);
-GO
 
--- =========================================================================
--- Module Sale (sal)
--- =========================================================================
-CREATE TABLE sal.Orders (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    OrderNumber VARCHAR(50) NOT NULL UNIQUE,
-    CustomerId INT NOT NULL,
-    EmployeeId INT NOT NULL,
-    OrderStatus VARCHAR(20) NOT NULL, 
-    SubTotal DECIMAL(18,2) NOT NULL,
-    Discount DECIMAL(18,2) NOT NULL DEFAULT 0.00,
-    TotalAmount DECIMAL(18,2) NOT NULL,
-    OrderDate DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT CK_OrderStatus CHECK (OrderStatus IN ('Pending', 'Invoiced', 'Cancelled'))
-);
-GO
-
-CREATE TABLE sal.OrderDetails (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    OrderId INT NOT NULL,
-    ProductId INT NOT NULL,
-    Quantity INT NOT NULL,
-    PriceAtSale DECIMAL(18,2) NOT NULL, 
-    LineTotal AS (Quantity * PriceAtSale), 
-    CONSTRAINT FK_OrderDetails_Orders FOREIGN KEY (OrderId) REFERENCES sal.Orders(Id) ON DELETE CASCADE,
-    CONSTRAINT CK_PositiveSaleQuantity CHECK (Quantity > 0)
-);
-GO
-
-CREATE INDEX IX_Orders_Customer ON sal.Orders(CustomerId);
-CREATE INDEX IX_Orders_Date ON sal.Orders(OrderDate);
-CREATE INDEX IX_OrderDetails_Order ON sal.OrderDetails(OrderId);
-CREATE INDEX IX_OrderDetails_Product ON sal.OrderDetails(ProductId);
 GO
 
 -- =========================================================================
@@ -218,7 +183,6 @@ GO
 CREATE TABLE bil.Invoices (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     InvoiceNumber VARCHAR(50) NOT NULL UNIQUE, 
-    OrderId INT NOT NULL, 
     CustomerId INT NOT NULL,
     EmployeeId INT NOT NULL,
     TaxAmount DECIMAL(18,2) NOT NULL, 
@@ -226,6 +190,7 @@ CREATE TABLE bil.Invoices (
     TotalBilled DECIMAL(18,2) NOT NULL,
     PaymentMethod VARCHAR(20) NOT NULL, 
     InvoiceDate DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    IsActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT CK_PaymentMethod CHECK (PaymentMethod IN ('Cash', 'Card', 'Transfer'))
 );
 GO
@@ -238,12 +203,11 @@ CREATE TABLE bil.InvoiceDetails (
     PriceBilled DECIMAL(18,2) NOT NULL,
     TaxRate DECIMAL(5,2) NOT NULL DEFAULT 15.00,
     LineTotal AS (Quantity * PriceBilled),
-    CONSTRAINT FK_InvoiceDetails_Invoices FOREIGN KEY (InvoiceId) REFERENCES bil.Invoices(Id) ON DELETE CASCADE,
+    --CONSTRAINT FK_InvoiceDetails_Invoices FOREIGN KEY (InvoiceId) REFERENCES bil.Invoices(Id) ON DELETE CASCADE,
     CONSTRAINT CK_PositiveInvoiceQuantity CHECK (Quantity > 0)
 );
 GO
 
-CREATE INDEX IX_Invoices_Order ON bil.Invoices(OrderId);
 CREATE INDEX IX_Invoices_Customer ON bil.Invoices(CustomerId);
 CREATE INDEX IX_Invoices_Date ON bil.Invoices(InvoiceDate);
 CREATE INDEX IX_InvoiceDetails_Invoice ON bil.InvoiceDetails(InvoiceId);

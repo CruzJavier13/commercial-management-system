@@ -9,7 +9,7 @@ namespace Mod.Billing.Application.Dtos
     {
         public int Id { get; set; }
         public string InvoiceNumber { get; set; } = string.Empty;
-        public int OrderId { get; set; }
+        //public int OrderId { get; set; }
         public int CustomerId { get; set; }
         public int EmployeeId { get; set; }
         public decimal TaxAmount { get; set; }
@@ -17,6 +17,7 @@ namespace Mod.Billing.Application.Dtos
         public decimal TotalBilled { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
         public DateTime InvoiceDate { get; set; }
+        public bool IsActive { get; set; }
         public List<GetInvoiceDetailDto> Details { get; set; } = new();
     }
 }
