@@ -1,6 +1,7 @@
 ﻿using CommercialSystem.Shared.Domain.Repositories;
 using Microsoft.Data.SqlClient;
 using Mod.Billing.Domain.Entities;
+using Mod.Billing.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace Mod.Billing.Infrastructure.Persistence
 {
-    public class InvoiceRepository : IWriteOnlyRepository<Invoice>, IReadOnlyRepository<Invoice>
+    public class InvoiceRepository : IInvoiceRepository
     {
         private readonly string _connectionString;
 
@@ -62,6 +63,11 @@ namespace Mod.Billing.Infrastructure.Persistence
             }
 
             return invoices;
+        }
+
+        public Task<IEnumerable<Invoice>> GetByDate(DateTime date)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<Invoice?> GetByIdAsync(int id)

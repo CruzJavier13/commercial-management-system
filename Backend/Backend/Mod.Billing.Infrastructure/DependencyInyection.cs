@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mod.Billing.Application.UseCase;
 using Mod.Billing.Domain.Entities;
+using Mod.Billing.Domain.Repositories;
 using Mod.Billing.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
@@ -18,8 +19,11 @@ namespace Mod.Billing.Infrastructure
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'CommerceConnectionString' not found.");
 
-            services.AddScoped<IWriteOnlyRepository<Invoice>>(provider => new InvoiceRepository(connectionString));
-            services.AddScoped<IReadOnlyRepository<Invoice>>(provider => new InvoiceRepository(connectionString));
+            // Repositories 
+            services.AddScoped<IInvoiceRepository>(provider => new InvoiceRepository(connectionString));
+
+            //services.AddScoped<IWriteOnlyRepository<Invoice>>(provider => new InvoiceRepository(connectionString));
+            //services.AddScoped<IReadOnlyRepository<Invoice>>(provider => new InvoiceRepository(connectionString));
 
             // Use cases
             services.AddScoped<CreateInvoiceUseCase>();
