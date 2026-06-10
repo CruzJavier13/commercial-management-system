@@ -1,5 +1,6 @@
 ﻿using CommercialSystem.Shared.Domain.Repositories;
 using Mod.Billing.Domain.Entities;
+using Mod.Billing.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,9 +9,9 @@ namespace Mod.Billing.Application.UseCase
 {
     public class DeleteInvoiceUseCase
     {
-        private readonly IWriteOnlyRepository<Invoice> _invoiceRepository;
+        private readonly IInvoiceRepository _invoiceRepository;
 
-        public DeleteInvoiceUseCase(IWriteOnlyRepository<Invoice> invoiceRepository) => _invoiceRepository = invoiceRepository;
+        public DeleteInvoiceUseCase(IInvoiceRepository invoiceRepository) => _invoiceRepository = invoiceRepository;
 
         public async Task ExecuteAsync(int id)
         {

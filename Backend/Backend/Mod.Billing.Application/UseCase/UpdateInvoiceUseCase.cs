@@ -1,6 +1,7 @@
 ﻿using CommercialSystem.Shared.Domain.Repositories;
 using Mod.Billing.Application.Dtos;
 using Mod.Billing.Domain.Entities;
+using Mod.Billing.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,9 +10,9 @@ namespace Mod.Billing.Application.UseCase
 {
     public class UpdateInvoiceUseCase
     {
-        private readonly IWriteOnlyRepository<Invoice> _invoiceWriteRepository;
+        private readonly IInvoiceRepository _invoiceWriteRepository;
 
-        public UpdateInvoiceUseCase(IWriteOnlyRepository<Invoice> invoiceWriteRepository)
+        public UpdateInvoiceUseCase(IInvoiceRepository invoiceWriteRepository)
         {
             _invoiceWriteRepository = invoiceWriteRepository;
         }

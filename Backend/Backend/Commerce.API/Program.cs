@@ -38,7 +38,7 @@ builder.Services.AddBillingModule(builder.Configuration);
 builder.Services.AddInventoryModule();
 
 // Customers Module
-builder.Services.AddCustomersModule();
+builder.Services.AddCustomersModule(builder.Configuration);
 
 // Sales Module
 builder.Services.AddSalesModule();

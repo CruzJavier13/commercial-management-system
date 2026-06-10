@@ -8,6 +8,13 @@ namespace Mod.Customers.Infrastructure.Persistence
 {
     public class CustomerRepository : ICustomerRepository
     {
+        private readonly string _connectionString;
+
+        public CustomerRepository(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         public Task<int> DeleteAsync(int id)
         {
             throw new NotImplementedException();

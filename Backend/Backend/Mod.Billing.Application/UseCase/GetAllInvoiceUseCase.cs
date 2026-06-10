@@ -1,6 +1,7 @@
 ﻿using CommercialSystem.Shared.Domain.Repositories;
 using Mod.Billing.Application.Dtos;
 using Mod.Billing.Domain.Entities;
+using Mod.Billing.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,9 +10,9 @@ namespace Mod.Billing.Application.UseCase
 {
     public class GetAllInvoiceUseCase
     {
-        private readonly IReadOnlyRepository<Invoice> _invoiceReadOnlyRepository;
+        private readonly IInvoiceRepository _invoiceReadOnlyRepository;
 
-        public GetAllInvoiceUseCase(IReadOnlyRepository<Invoice> invoiceReadOnlyRepository)
+        public GetAllInvoiceUseCase(IInvoiceRepository invoiceReadOnlyRepository)
         {
             _invoiceReadOnlyRepository = invoiceReadOnlyRepository;
         }
