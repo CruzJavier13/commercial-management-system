@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Mod.Billing.Application.UseCase;
+using Mod.Customers.Application.UseCases;
 using Mod.Customers.Domain.Repositories;
 using Mod.Customers.Infrastructure.Persistence;
 using System;
@@ -19,11 +19,11 @@ namespace Mod.Customers.Infrastructure
             services.AddScoped<ICustomerRepository>(provider => new CustomerRepository(connectionString));
 
             // Register use cases
-            services.AddScoped<CreateInvoiceUseCase>();
-            services.AddScoped<GetInvoiceByIdUseCase>();
-            services.AddScoped<GetAllInvoiceUseCase>();
-            services.AddScoped<UpdateInvoiceUseCase>();
-            services.AddScoped<DeleteInvoiceUseCase>();
+            services.AddScoped<CreateCustomerUseCase>();
+            services.AddScoped<GetAllCustomerUseCase>();
+            services.AddScoped<GetByIdCustomerUseCase>();
+            services.AddScoped<UpdateCustomerUseCase>();
+            services.AddScoped<DeleteCustomerUseCase>();
 
             return services;
         }

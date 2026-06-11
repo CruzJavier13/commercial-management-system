@@ -81,7 +81,7 @@ namespace Mod.Customers.Infrastructure.Persistence
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            using var command = new SqlCommand("cus.sp_Customer_GetById", connection);
+            using var command = new SqlCommand("cst.usp_Customers_GetById", connection);
             command.CommandType = CommandType.StoredProcedure;
 
             command.Parameters.AddWithValue("@Id", id);
@@ -112,7 +112,7 @@ namespace Mod.Customers.Infrastructure.Persistence
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            using var command = new SqlCommand("cus.sp_Customer_GetAll", connection);
+            using var command = new SqlCommand("cst.sp_Customers_GetAll", connection);
             command.CommandType = CommandType.StoredProcedure;
 
             using var reader = await command.ExecuteReaderAsync();

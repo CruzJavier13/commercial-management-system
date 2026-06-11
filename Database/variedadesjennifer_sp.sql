@@ -200,6 +200,17 @@ BEGIN
 END;
 GO
 
+CREATE OR ALTER PROCEDURE cst.usp_Customers_GetById
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, CustomerCode, FirstName, LastName, IdentificationNumber, Email, PhoneNumber, Address, IsActive
+    FROM cst.Customers
+    WHERE Id = @Id;
+END;
+GO
+
 -- =========================================================================
 -- Module Products
 -- =========================================================================
