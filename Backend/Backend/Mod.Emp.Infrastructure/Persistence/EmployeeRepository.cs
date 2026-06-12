@@ -9,77 +9,136 @@ using System.Text;
 
 namespace Mod.Emp.Infrastructure.Persistence
 {
-    public class EmployeeRepository: IEmployeeRepository
+    public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly ISqlDbContext _dbContext;
+        private readonly string _connectionString;
 
-        public EmployeeRepository(ISqlDbContext dbContext)
+        public EmployeeRepository(string connectionString)
         {
-            _dbContext = dbContext;
+            _connectionString = connectionString;
+        }
+        public async Task<int> DeleteAsync(int id)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand("emp.usp_Employees_Delete", connection);
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@Id", id);
+
+            return await command.ExecuteNonQueryAsync();
         }
 
-        public Task<int> DeleteAsync(int id)
+        public async Task<IEnumerable<Employee>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var employees = new List<Employee>();
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand("emp.usp_Employees_GetAll", connection);
+            command.CommandType = CommandType.StoredProcedure;
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                employees.Add(new Employee
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    EmployeeCode = reader.GetString(reader.GetOrdinal("EmployeeCode")),
+                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                    LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                    IdentificationNumber = reader.GetString(reader.GetOrdinal("IdentificationNumber")),
+                    SocialSecurity = reader.IsDBNull(reader.GetOrdinal("SocialSecurity")) ? string.Empty : reader.GetString(reader.GetOrdinal("SocialSecurity")),
+                    Phone = reader.GetString(reader.GetOrdinal("Phone")),
+                    Address = reader.IsDBNull(reader.GetOrdinal("Address")) ? string.Empty : reader.GetString(reader.GetOrdinal("Address")),
+                    IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
+                });
+            }
+
+            return employees;
         }
 
-        public Task<IEnumerable<Employee>> GetAllAsync()
+        public async Task<Employee?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand("emp.usp_Employees_GetById", connection);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@Id", id);
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (!await reader.ReadAsync()) return null;
+
+            return new Employee
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                EmployeeCode = reader.GetString(reader.GetOrdinal("EmployeeCode")),
+                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                IdentificationNumber = reader.GetString(reader.GetOrdinal("IdentificationNumber")), 
+                SocialSecurity = reader.IsDBNull(reader.GetOrdinal("SocialSecurity")) ? string.Empty : reader.GetString(reader.GetOrdinal("SocialSecurity")), 
+                Phone = reader.GetString(reader.GetOrdinal("Phone")), 
+                Address = reader.IsDBNull(reader.GetOrdinal("Address")) ? string.Empty : reader.GetString(reader.GetOrdinal("Address")),
+                IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
+            };
         }
 
-        public Task<int> GetByIdAsync(int id)
+        public async Task SaveAsync(Employee t)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<int> SaveAsync(
-            int? id,
-            string employeeCode,
-            string firstName,
-            string lastName,
-            string identificationNumber,
-            string? socialSecurity,
-            string phone,
-            string? address,
-            bool isActive,
-            int roleId,
-            string systemUsername,
-            string? passwordHash)
-        {
-
-            using var connection = (SqlConnection)_dbContext.CreateConnection();
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
 
             using var command = new SqlCommand("emp.usp_Employees_Save", connection);
             command.CommandType = CommandType.StoredProcedure;
 
-            command.Parameters.Add(new SqlParameter("@Id", id.HasValue && id.Value > 0 ? id.Value : DBNull.Value));
-            command.Parameters.Add(new SqlParameter("@EmployeeCode", employeeCode));
-            command.Parameters.Add(new SqlParameter("@FirstName", firstName));
-            command.Parameters.Add(new SqlParameter("@LastName", lastName));
-            command.Parameters.Add(new SqlParameter("@IdentificationNumber", identificationNumber));
-            command.Parameters.Add(new SqlParameter("@SocialSecurity", (object?)socialSecurity ?? DBNull.Value));
-            command.Parameters.Add(new SqlParameter("@Phone", phone));
-            command.Parameters.Add(new SqlParameter("@Address", (object?)address ?? DBNull.Value));
-            command.Parameters.Add(new SqlParameter("@IsActive", isActive));
-            command.Parameters.Add(new SqlParameter("@RoleId", roleId));
-            command.Parameters.Add(new SqlParameter("@SystemUsername", systemUsername));
-            command.Parameters.Add(new SqlParameter("@PasswordHash", (object?)passwordHash ?? DBNull.Value));
+            command.Parameters.AddWithValue("@Id", DBNull.Value);
+            command.Parameters.AddWithValue("@EmployeeCode", t.EmployeeCode);
+            command.Parameters.AddWithValue("@FirstName", t.FirstName);
+            command.Parameters.AddWithValue("@LastName", t.LastName);
+            command.Parameters.AddWithValue("@IdentificationNumber", t.IdentificationNumber);
+            command.Parameters.AddWithValue("@SocialSecurity", t.SocialSecurity ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@Phone", t.Phone);
+            command.Parameters.AddWithValue("@Address", t.Address ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@IsActive", t.IsActive);
 
-            await connection.OpenAsync();
-            var result = await command.ExecuteScalarAsync();
+            command.Parameters.AddWithValue("@RoleId", t.SessionAuth?.RoleId ?? 0);
+            command.Parameters.AddWithValue("@SystemUsername", t.SessionAuth?.SystemUsername ?? string.Empty);
+            command.Parameters.AddWithValue("@PasswordHash", t.SessionAuth?.PasswordHash ?? (object)DBNull.Value);
 
-            if (result != null && result != DBNull.Value)
-            {
-                return Convert.ToInt32(result);
-            }
-
-            throw new InvalidOperationException("El procedimiento almacenado 'emp.usp_Employees_Save' no retornó un ID válido.");
+            await command.ExecuteNonQueryAsync();
         }
 
-        public Task<int> UpdateAsync(int? id, string employeeCode, string firstName, string lastName, string identificationNumber, string? socialSecurity, string phone, string? address, bool isActive, int RoleId, string SystemUsername, string PasswordHash)
+        public async Task<Employee> UpdateAsync(Employee t, int id)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand("emp.usp_Employees_Save", connection);
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@Id", id);
+            command.Parameters.AddWithValue("@EmployeeCode", t.EmployeeCode);
+            command.Parameters.AddWithValue("@FirstName", t.FirstName);
+            command.Parameters.AddWithValue("@LastName", t.LastName);
+            command.Parameters.AddWithValue("@IdentificationNumber", t.IdentificationNumber);
+            command.Parameters.AddWithValue("@SocialSecurity", t.SocialSecurity ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@Phone", t.Phone);
+            command.Parameters.AddWithValue("@Address", t.Address ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@IsActive", t.IsActive);
+
+            command.Parameters.AddWithValue("@RoleId", t.SessionAuth?.RoleId ?? 0);
+            command.Parameters.AddWithValue("@SystemUsername", t.SessionAuth?.SystemUsername ?? string.Empty);
+            command.Parameters.AddWithValue("@PasswordHash", t.SessionAuth?.PasswordHash ?? (object)DBNull.Value);
+
+            await command.ExecuteNonQueryAsync();
+            return t;
         }
     }
 }

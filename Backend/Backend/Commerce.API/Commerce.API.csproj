@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Employees\" />
     <Folder Include="Controllers\Inventory\" />
     <Folder Include="Controllers\Sales\" />
   </ItemGroup>

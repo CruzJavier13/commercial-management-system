@@ -26,7 +26,7 @@ builder.Services.AddSharedPersistence(builder.Configuration);
 
 // Register Module Dependencies (Dependency Injection Mapping)
 // Employees Module
-builder.Services.AddEmployeesModule();
+builder.Services.AddEmployeesModule(builder.Configuration);
 
 // Products Module
 builder.Services.AddProductsModule();

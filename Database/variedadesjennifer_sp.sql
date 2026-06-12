@@ -120,6 +120,57 @@ BEGIN
         THROW;
     END CATCH
 END;
+
+GO
+
+CREATE OR ALTER PROCEDURE emp.usp_Employees_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT e.Id, 
+           e.EmployeeCode, 
+           e.FirstName, 
+           e.LastName, 
+           e.IdentificationNumber, 
+           e.SocialSecurity, 
+           e.Phone, 
+           e.Address, 
+           e.IsActive, 
+           e.CreatedAt,
+           sa.RoleId, 
+           sa.SystemUsername, 
+           sa.PasswordHash
+    FROM emp.Employees e
+    LEFT JOIN emp.session_auth sa ON e.Id = sa.EmployeeId
+    WHERE e.IsActive = 1;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE emp.usp_Employees_GetById
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT e.Id, 
+           e.EmployeeCode, 
+           e.FirstName, 
+           e.LastName, 
+           e.IdentificationNumber, 
+           e.SocialSecurity, 
+           e.Phone, 
+           e.Address, 
+           e.IsActive, 
+           e.CreatedAt,
+           sa.RoleId, 
+           sa.SystemUsername, 
+           sa.PasswordHash
+    FROM emp.Employees e
+    LEFT JOIN emp.session_auth sa ON e.Id = sa.EmployeeId
+    WHERE e.Id = @Id;
+END;
+
 GO
 
 -- =========================================================================
@@ -205,12 +256,21 @@ CREATE OR ALTER PROCEDURE cst.usp_Customers_GetById
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT Id, CustomerCode, FirstName, LastName, IdentificationNumber, Email, PhoneNumber, Address, IsActive
+    SELECT Id, CustomerCode, FirstName, LastName, IdentificationNumber, Email, PhoneNumber, Address, IsActive, CreatedAt
     FROM cst.Customers
     WHERE Id = @Id;
 END;
 GO
 
+CREATE OR ALTER PROCEDURE cst.sp_Customers_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, CustomerCode, FirstName, LastName, IdentificationNumber, Email, PhoneNumber, Address, IsActive, CreatedAt
+    FROM cst.Customers
+    WHERE IsActive = 1;
+END;
+GO
 -- =========================================================================
 -- Module Products
 -- =========================================================================

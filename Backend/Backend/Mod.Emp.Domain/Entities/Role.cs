@@ -7,12 +7,13 @@ namespace Mod.Emp.Domain.Entities
     public class Role
     {
         public int Id { get; set; }
-        public int EmployeeId { get; set; }
-        public int RoleId { get; set; }
-        public string? SystemUsername { get; set; }
-        public string? PasswordHash { get; set; }
+        public string RoleCode { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public bool IsActive { get; set; } = true;
-        public virtual Employee Employee { get; set; } = null!;
-        public virtual Role ParentRole { get; set; } = null!;
+
+        public int? ParentRoleId { get; set; }
+        public virtual Role? ParentRole { get; set; }
+        public virtual ICollection<Session> Sessions { get; set; } = new List<Session>();
     }
 }
