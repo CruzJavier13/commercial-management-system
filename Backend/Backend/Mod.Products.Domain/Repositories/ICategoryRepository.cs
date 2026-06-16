@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Mod.Products.Domain.Repositories
 {
-    public interface IProductRepository : IReadOnlyRepository<Product>, IWriteOnlyRepository<Product>
+    public interface ICategoryRepository : IReadOnlyRepository<Category>, IWriteOnlyRepository<Category>
     {
     }
 }

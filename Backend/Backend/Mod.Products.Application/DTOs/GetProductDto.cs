@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-
-namespace Mod.Products.Domain.Entities
+namespace Mod.Products.Application.DTOs
 {
-    public class Product
+    public class GetProductDto
     {
         public int Id { get; set; }
         public string ProductCode { get; set; } = string.Empty;
@@ -15,10 +14,9 @@ namespace Mod.Products.Domain.Entities
         public string? Description { get; set; }
         public decimal BasePrice { get; set; }
         public bool IsVirtualService { get; set; }
-        public bool IsActive { get; set; } = true;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        public virtual MedicineAttributes? MedicineAttributes { get; set; }
-        public virtual DeviceAttributes? DeviceAttributes { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public MedicineExtensionDto? MedicineAttributes { get; set; }
+        public DeviceExtensionDto? DeviceAttributes { get; set; }
     }
 }

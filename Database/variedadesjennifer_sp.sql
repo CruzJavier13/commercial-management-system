@@ -309,6 +309,47 @@ BEGIN
 END;
 GO
 
+CREATE OR ALTER PROCEDURE prd.usp_Categories_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        Id,
+        CategoryCode,
+        Name,
+        Description,
+        IsActive,
+        CreatedAt
+    FROM 
+        prd.Categories
+    WHERE 
+        IsActive = 1
+    ORDER BY 
+        Name ASC;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE prd.usp_Categories_GetById
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        Id,
+        CategoryCode,
+        Name,
+        Description,
+        IsActive,
+        CreatedAt
+    FROM 
+        prd.Categories
+    WHERE 
+        Id = @Id;
+END;
+GO
+
 CREATE OR ALTER PROCEDURE prd.usp_Suppliers_Upsert
     @Id INT = NULL,
     @SupplierCode VARCHAR(50),
@@ -345,6 +386,62 @@ BEGIN
         IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
         THROW;
     END CATCH
+END;
+GO
+CREATE OR ALTER PROCEDURE prd.usp_Suppliers_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        Id,
+        SupplierCode,
+        CompanyName,
+        TaxIdentification,
+        Email,
+        PhoneNumber,
+        Address,
+        IsActive
+    FROM 
+        prd.Suppliers
+    WHERE 
+        IsActive = 1
+    ORDER BY 
+        CompanyName ASC;
+END;
+GO
+CREATE OR ALTER PROCEDURE prd.usp_Suppliers_GetById
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        Id,
+        SupplierCode,
+        CompanyName,
+        TaxIdentification,
+        Email,
+        PhoneNumber,
+        Address,
+        IsActive
+    FROM 
+        prd.Suppliers
+    WHERE 
+        Id = @Id;
+END;
+GO
+CREATE OR ALTER PROCEDURE prd.usp_Suppliers_Delete
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE prd.Suppliers
+    SET IsActive = 0
+    WHERE Id = @Id;
+
+    SELECT @@ROWCOUNT AS RowsAffected;
 END;
 GO
 
@@ -419,10 +516,91 @@ BEGIN
     END CATCH
 END;
 GO
+CREATE OR ALTER PROCEDURE prd.usp_Product_Delete
+    @Id INT
+AS
+BEGIN 
+    SET NOCOUNT ON;
 
--- =========================================================================
--- Module Inventory
--- =========================================================================
+    UPDATE prd.Products 
+    SET IsActive = 0
+    WHERE Id = @Id;
+END;
+GO
+CREATE OR ALTER PROCEDURE prd.usp_Products_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        p.Id, 
+        p.ProductCode, 
+        p.CategoryId, 
+        p.SupplierId, 
+        p.Name, 
+        p.Description, 
+        p.BasePrice, 
+        p.IsVirtualService, 
+        p.IsActive,
+        
+        m.HealthRegisterNumber, 
+        m.ActiveIngredient, 
+        m.ExpirationDateRequired, 
+        m.RequiresPrescription,
+        
+        d.Brand, 
+        d.Model, 
+        d.SerialNumberOrIMEI, 
+        d.WarrantyPeriodMonths
+    FROM 
+        prd.Products p
+    LEFT JOIN 
+        prd.MedicineAttributes m ON p.Id = m.ProductId
+    LEFT JOIN 
+        prd.DeviceAttributes d ON p.Id = d.ProductId
+    WHERE 
+        p.IsActive = 1
+    ORDER BY 
+        p.Name ASC;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE prd.usp_Products_GetById
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        p.Id, 
+        p.ProductCode, 
+        p.CategoryId, 
+        p.SupplierId, 
+        p.Name, 
+        p.Description, 
+        p.BasePrice, 
+        p.IsVirtualService, 
+        p.IsActive,
+        
+        m.HealthRegisterNumber, 
+        m.ActiveIngredient, 
+        m.ExpirationDateRequired, 
+        m.RequiresPrescription,
+        
+        d.Brand, 
+        d.Model, 
+        d.SerialNumberOrIMEI, 
+        d.WarrantyPeriodMonths
+    FROM 
+        prd.Products p
+    LEFT JOIN 
+        prd.MedicineAttributes m ON p.Id = m.ProductId
+    LEFT JOIN 
+        prd.DeviceAttributes d ON p.Id = d.ProductId
+    WHERE 
+        p.Id = @Id;
+END;
+GO
 
 CREATE OR ALTER PROCEDURE inv.usp_ProductStocks_Initialize
     @ProductId INT,
@@ -469,12 +647,10 @@ BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
 
-
         IF NOT EXISTS(SELECT 1 FROM inv.ProductStocks WHERE ProductId = @ProductId)
         BEGIN
             RAISERROR('Control de inventario no inicializado para este producto en el módulo de Stock.', 16, 1);
         END
-
 
         IF @MovementType = 'IN'
         BEGIN
@@ -486,6 +662,14 @@ BEGIN
         ELSE IF @MovementType = 'OUT'
         BEGIN
 
+            DECLARE @AvailableStock INT;
+            SELECT @AvailableStock = CurrentStock FROM inv.ProductStocks WHERE ProductId = @ProductId;
+
+            IF @AvailableStock < @Quantity
+            BEGIN
+                RAISERROR('Stock insuficiente. No se puede registrar la salida de material.', 16, 1);
+            END
+
             UPDATE inv.ProductStocks
             SET CurrentStock = CurrentStock - @Quantity,
                 LastUpdate = SYSUTCDATETIME()
@@ -496,18 +680,64 @@ BEGIN
             RAISERROR('El tipo de movimiento debe ser estrictamente ''IN'' o ''OUT''.', 16, 1);
         END
 
-
         INSERT INTO inv.StockMovements (ProductId, SupplierId, MovementType, Quantity, UnitCost, Concept, ReferenceDocument)
         VALUES (@ProductId, @SupplierId, @MovementType, @Quantity, @UnitCost, @Concept, @ReferenceDocument);
 
         COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
-        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        if XACT_STATE() <> 0 ROLLBACK TRANSACTION;
         THROW;
     END CATCH
 END;
+GO
+-- **************************************************************
+CREATE OR ALTER PROCEDURE inv.usp_StockMovements_GetByProductId
+    @ProductId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
 
+    SELECT 
+        Id,
+        ProductId,
+        SupplierId,
+        MovementType,
+        Quantity,
+        UnitCost,
+        TotalCost, 
+        Concept,
+        ReferenceDocument,
+        MovementDate
+    FROM 
+        inv.StockMovements
+    WHERE 
+        ProductId = @ProductId
+    ORDER BY 
+        MovementDate DESC; 
+END;
+GO
+CREATE OR ALTER PROCEDURE inv.usp_StockMovements_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        Id,
+        ProductId,
+        SupplierId,
+        MovementType,
+        Quantity,
+        UnitCost,
+        TotalCost,
+        Concept,
+        ReferenceDocument,
+        MovementDate
+    FROM 
+        inv.StockMovements
+    ORDER BY 
+        MovementDate DESC;
+END;
 GO
 
 CREATE TYPE bil.InvoiceDetailType AS TABLE

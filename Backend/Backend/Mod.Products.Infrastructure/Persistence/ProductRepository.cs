@@ -8,24 +8,21 @@ namespace Mod.Products.Infrastructure.Persistence;
 
 public class ProductRepository : IProductRepository
 {
-    private readonly ISqlDbContext _dbContext;
+    private readonly string _connectionString;
 
-    public ProductRepository(ISqlDbContext dbContext)
+    public ProductRepository(string connectionString)
     {
-        _dbContext = dbContext;
+        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
     }
-
-    public async Task<int> SaveAsync(Product product)
+    public async Task SaveAsync(Product product)
     {
-        using var connection = (SqlConnection)_dbContext.CreateConnection();
-
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
 
         using var command = new SqlCommand("prd.usp_Products_Save", connection);
         command.CommandType = CommandType.StoredProcedure;
 
-        command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int)
-        { Value = product.Id > 0 ? product.Id : DBNull.Value });
-
+        command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = product.Id > 0 ? product.Id : DBNull.Value });
         command.Parameters.Add(new SqlParameter("@ProductCode", SqlDbType.VarChar, 50) { Value = product.ProductCode });
         command.Parameters.Add(new SqlParameter("@CategoryId", SqlDbType.Int) { Value = product.CategoryId });
         command.Parameters.Add(new SqlParameter("@SupplierId", SqlDbType.Int) { Value = product.SupplierId });
@@ -35,101 +32,131 @@ public class ProductRepository : IProductRepository
         command.Parameters.Add(new SqlParameter("@IsVirtualService", SqlDbType.Bit) { Value = product.IsVirtualService });
         command.Parameters.Add(new SqlParameter("@IsActive", SqlDbType.Bit) { Value = product.IsActive });
 
-        await connection.OpenAsync();
+        command.Parameters.Add(new SqlParameter("@HealthRegisterNumber", SqlDbType.VarChar, 50)
+        { Value = (object?)product.MedicineAttributes?.HealthRegisterNumber ?? DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@ActiveIngredient", SqlDbType.VarChar, 150)
+        { Value = (object?)product.MedicineAttributes?.ActiveIngredient ?? DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@ExpirationDateRequired", SqlDbType.Bit)
+        { Value = product.MedicineAttributes != null ? product.MedicineAttributes.ExpirationDateRequired : DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@RequiresPrescription", SqlDbType.Bit)
+        { Value = product.MedicineAttributes != null ? product.MedicineAttributes.RequiresPrescription : DBNull.Value });
 
+        command.Parameters.Add(new SqlParameter("@Brand", SqlDbType.VarChar, 100)
+        { Value = (object?)product.DeviceAttributes?.Brand ?? DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@Model", SqlDbType.VarChar, 100)
+        { Value = (object?)product.DeviceAttributes?.Model ?? DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@SerialNumberOrIMEI", SqlDbType.VarChar, 100)
+        { Value = (object?)product.DeviceAttributes?.SerialNumberOrIMEI ?? DBNull.Value });
+        command.Parameters.Add(new SqlParameter("@WarrantyPeriodMonths", SqlDbType.Int)
+        { Value = product.DeviceAttributes != null ? product.DeviceAttributes.WarrantyPeriodMonths : DBNull.Value });
 
         var result = await command.ExecuteScalarAsync();
 
         if (result != null && result != DBNull.Value)
         {
-            return Convert.ToInt32(result);
+             Convert.ToInt32(result);
         }
 
         throw new InvalidOperationException("El procedimiento almacenado 'prd.usp_Products_Save' no retornó un identificador válido.");
     }
 
-    public async Task<int> UpdateAsync(Product product)
+    public async Task UpdateAsync(Product product)
     {
-        return await SaveAsync(product);
+         await SaveAsync(product);
+    }
+    public async Task<int> DeleteAsync(int id)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand("prd.usp_Product_Delete", connection);
+        command.CommandType = CommandType.StoredProcedure;
+        command.Parameters.AddWithValue("@Id", id);
+
+        return await command.ExecuteNonQueryAsync();
     }
 
     public async Task<Product?> GetByIdAsync(int id)
     {
-        using var connection = (SqlConnection)_dbContext.CreateConnection();
-        const string query = @"SELECT Id, ProductCode, CategoryId, SupplierId, Name, Description, BasePrice, IsVirtualService, IsActive 
-                               FROM prd.Products WHERE Id = @Id;";
-
-        using var command = new SqlCommand(query, connection);
-        command.CommandType = CommandType.Text;
-        command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = id });
-
+        using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
+
+        using var command = new SqlCommand("prd.usp_Products_GetById", connection);
+        command.CommandType = CommandType.StoredProcedure;
+        command.Parameters.AddWithValue("@Id", id);
+
         using var reader = await command.ExecuteReaderAsync();
 
         if (await reader.ReadAsync())
         {
-            return new Product
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                ProductCode = reader.GetString(reader.GetOrdinal("ProductCode")),
-                CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                SupplierId = reader.GetInt32(reader.GetOrdinal("SupplierId")),
-                Name = reader.GetString(reader.GetOrdinal("Name")),
-                Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                BasePrice = reader.GetDecimal(reader.GetOrdinal("BasePrice")),
-                IsVirtualService = reader.GetBoolean(reader.GetOrdinal("IsVirtualService")),
-                IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive"))
-            };
+            return MapFromReader(reader);
         }
 
         return null;
     }
 
-
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
         var products = new List<Product>();
-        using var connection = (SqlConnection)_dbContext.CreateConnection();
-        const string query = @"SELECT Id, ProductCode, CategoryId, SupplierId, Name, Description, BasePrice, IsVirtualService, IsActive 
-                               FROM prd.Products;";
 
-        using var command = new SqlCommand(query, connection);
-        command.CommandType = CommandType.Text;
-
+        using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
+
+        using var command = new SqlCommand("prd.usp_Products_GetAll", connection);
+        command.CommandType = CommandType.StoredProcedure;
+
         using var reader = await command.ExecuteReaderAsync();
 
         while (await reader.ReadAsync())
         {
-            products.Add(new Product
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                ProductCode = reader.GetString(reader.GetOrdinal("ProductCode")),
-                CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                SupplierId = reader.GetInt32(reader.GetOrdinal("SupplierId")),
-                Name = reader.GetString(reader.GetOrdinal("Name")),
-                Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                BasePrice = reader.GetDecimal(reader.GetOrdinal("BasePrice")),
-                IsVirtualService = reader.GetBoolean(reader.GetOrdinal("IsVirtualService")),
-                IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive"))
-            });
+            products.Add(MapFromReader(reader));
         }
 
         return products;
     }
 
-    public async Task<int> DeleteAsync(int id)
+    private static Product MapFromReader(SqlDataReader reader)
     {
-        using var connection = (SqlConnection)_dbContext.CreateConnection();
-        const string query = "UPDATE prd.Products SET IsActive = 0 WHERE Id = @Id; SELECT @Id;";
+        var product = new Product
+        {
+            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+            ProductCode = reader.GetString(reader.GetOrdinal("ProductCode")),
+            CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+            SupplierId = reader.GetInt32(reader.GetOrdinal("SupplierId")),
+            Name = reader.GetString(reader.GetOrdinal("Name")),
+            Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
+            BasePrice = reader.GetDecimal(reader.GetOrdinal("BasePrice")),
+            IsVirtualService = reader.GetBoolean(reader.GetOrdinal("IsVirtualService")),
+            IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive"))
+        };
 
-        using var command = new SqlCommand(query, connection);
-        command.CommandType = CommandType.Text;
-        command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = id });
+        if (!reader.IsDBNull(reader.GetOrdinal("HealthRegisterNumber")))
+        {
+            product.MedicineAttributes = new MedicineAttributes
+            {
+                HealthRegisterNumber = reader.GetString(reader.GetOrdinal("HealthRegisterNumber")),
+                ActiveIngredient = reader.IsDBNull(reader.GetOrdinal("ActiveIngredient")) ? null : reader.GetString(reader.GetOrdinal("ActiveIngredient")),
+                ExpirationDateRequired = reader.GetBoolean(reader.GetOrdinal("ExpirationDateRequired")),
+                RequiresPrescription = reader.GetBoolean(reader.GetOrdinal("RequiresPrescription"))
+            };
+        }
 
-        await connection.OpenAsync();
-        var result = await command.ExecuteScalarAsync();
+        if (!reader.IsDBNull(reader.GetOrdinal("Brand")))
+        {
+            product.DeviceAttributes = new DeviceAttributes
+            {
+                Brand = reader.GetString(reader.GetOrdinal("Brand")),
+                Model = reader.IsDBNull(reader.GetOrdinal("Model")) ? null : reader.GetString(reader.GetOrdinal("Model")),
+                SerialNumberOrIMEI = reader.IsDBNull(reader.GetOrdinal("SerialNumberOrIMEI")) ? null : reader.GetString(reader.GetOrdinal("SerialNumberOrIMEI")),
+                WarrantyPeriodMonths = reader.GetInt32(reader.GetOrdinal("WarrantyPeriodMonths"))
+            };
+        }
 
-        return result != null ? Convert.ToInt32(result) : 0;
+        return product;
+    }
+
+    public Task<Product> UpdateAsync(Product t, int id)
+    {
+        throw new NotImplementedException();
     }
 }

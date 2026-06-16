@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommercialSystem.Shared.Domain\CommercialSystem.Shared.Domain.csproj" />
     <ProjectReference Include="..\CommercialSystem.Shared\CommercialSystem.Shared.Persistence.csproj" />
   </ItemGroup>
 

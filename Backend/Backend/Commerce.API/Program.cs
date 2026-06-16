@@ -29,13 +29,13 @@ builder.Services.AddSharedPersistence(builder.Configuration);
 builder.Services.AddEmployeesModule(builder.Configuration);
 
 // Products Module
-builder.Services.AddProductsModule();
+builder.Services.AddProductsModule(builder.Configuration);
 
 // Bills Module
 builder.Services.AddBillingModule(builder.Configuration);
 
 // Inventory Module
-builder.Services.AddInventoryModule();
+builder.Services.AddInventoryModule(builder.Configuration);
 
 // Customers Module
 builder.Services.AddCustomersModule(builder.Configuration);
