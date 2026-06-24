@@ -513,15 +513,15 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
-__screenshots__/
+/frontend/.angular/cache
+/frontend/.sass-cache/
+/frontend/connect.lock
+/frontend/coverage
+/frontend/libpeerconnection.log
+/frontend/testem.log
+/frontend/typings
+/frontend/__screenshots__/
 
 # System files
-.DS_Store
-Thumbs.db
+/frontend/.DS_Store
+/frontend/Thumbs.db
