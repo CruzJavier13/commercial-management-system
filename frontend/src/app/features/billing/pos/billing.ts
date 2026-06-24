@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GetProductDto } from '../../../core/models/product.interface';
 import { InvoiceDetailDto, CreateInvoiceDto } from '../../../core/models/billing.interface';
+import { BillingService } from '../../../core/services/billing-service/billing.service';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-billing',
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule],
   templateUrl: './billing.html'
 })
 export class Billing implements OnInit {
@@ -29,9 +31,12 @@ export class Billing implements OnInit {
     { id: 103, productCode: 'SKU-GEN-MUSE', name: 'Mouse Inalámbrico Ergonómico Logistics', basePrice: 25.00 }
   ];
 
-  constructor() {}
+  constructor(
+    private billingService: BillingService,
+    private router: Router
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   addToCart(product: any): void {
     const existingItem = this.cartItems.find(item => item.productId === product.id);
@@ -67,7 +72,7 @@ export class Billing implements OnInit {
 
   calculateInvoiceTotals(): void {
     this.subTotal = this.cartItems.reduce((acc, item) => acc + item.lineTotal, 0);
-    this.taxAmount = this.subTotal * 0.15; 
+    this.taxAmount = this.subTotal * 0.15;
     this.totalAmount = this.subTotal + this.taxAmount;
   }
 
@@ -79,13 +84,28 @@ export class Billing implements OnInit {
 
   checkoutInvoice(): void {
     const finalInvoicePayload: CreateInvoiceDto = {
-      customerId: 1, 
-      employeeId: 2, 
+      customerId: 1,
+      employeeId: 2,
       paymentMethod: this.paymentMethod,
       details: this.cartItems
     };
 
     alert('Despachando Orden de Caja al endpoint de .NET (sal.Invoices):\n' + JSON.stringify(finalInvoicePayload));
-    this.clearCart();
+    this.billingService.createInvoice(finalInvoicePayload).subscribe({
+      next: (response) => {
+        if (response.success) {
+          alert('¡Venta procesada con éxito! Stock rebajado en Kárdex y factura asentada contablemente.');
+          this.clearCart(); 
+        } else {
+          alert('Error en transacciones de SQL Server: ' + response.error);
+        }
+      },
+      error: (err) => {
+        console.error('Fallo de red:', err);
+        alert('Error crítico de comunicación: El módulo de caja no pudo conectar con la API de .NET.');
+      }
+    });
+
+    //this.clearCart();
   }
 }

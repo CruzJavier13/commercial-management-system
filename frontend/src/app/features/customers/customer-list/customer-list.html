@@ -32,50 +32,46 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200 text-sm text-slate-600">
-          
-          <!-- Mensaje condicional por si la lista viene vacía -->
-          <tr *ngIf="customersList.length === 0">
-            <td colspan="7" class="px-6 py-12 text-center text-slate-400">
-              <div class="text-base font-medium mb-1">No se encontraron clientes registrados</div>
-              <div class="text-xs">Usa la opción "+ Nuevo Cliente" en el menú para dar de alta registros.</div>
-            </td>
-          </tr>
+  
+  <!-- Mensaje condicional si la lista filtrada viene vacía -->
+  <tr *ngIf="filterCustomers().length === 0">
+    <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+      <div class="text-base font-medium mb-1">No se encontraron clientes registrados</div>
+      <div class="text-xs">Usa la opción "+ Nuevo Cliente" en el menú para dar de alta registros.</div>
+    </td>
+  </tr>
 
-          <!-- 🛠Block: ITERACIÓN DINÁMICA DE CLIENTES DE TU API .NET -->
-          <tr *ngFor="let client of customersList" class="hover:bg-slate-50/60 transition duration-100 ease-in-out">
-            <td class="px-6 py-4 font-semibold text-slate-900">{{ client.id }}</td>
-            <td class="px-6 py-4">
-              <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-mono font-bold rounded-lg border border-slate-200 uppercase">{{ client.customerCode }}</span>
-            </td>
-            <td class="px-6 py-4 font-mono text-xs text-slate-500 font-bold uppercase">
-              {{ client.taxIdentification }}
-            </td>
-            <td class="px-6 py-4">
-              <div class="font-medium text-slate-800">{{ client.fullName }}</div>
-              <div class="text-xs text-slate-400 max-w-xs truncate" [title]="client.address">{{ client.address || 'Sin dirección registrada' }}</div>
-            </td>
-            <td class="px-6 py-4 space-y-0.5 text-xs text-slate-700">
-              <div class="flex items-center gap-1"><span>📞</span> {{ client.phoneNumber || 'Sin número' }}</div>
-              <div class="text-slate-400 truncate max-w-[180px]" [title]="client.email">✉️ {{ client.email || 'Sin correo' }}</div>
-            </td>
-            <td class="px-6 py-4 text-center">
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
-                <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span>Activo
-              </span>
-            </td>
-            <td class="px-6 py-4 text-center">
-              <div class="flex items-center justify-center gap-1">
-                <button (click)="onEdit(client.id)" title="Modificar Cliente" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition duration-150">
-                  ✏️
-                </button>
-                <button (click)="onDelete(client.id)" title="Desactivar" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition duration-150">
-                  🗑️
-                </button>
-              </div>
-            </td>
-          </tr>
+  <!-- 🚀 EL BUCLE OFICIAL: Utiliza estrictamente 'of' apuntando a tu función computada -->
+  <tr *ngFor="let client of filterCustomers()" class="hover:bg-slate-50/60 transition duration-100 ease-in-out">
+    <td class="px-6 py-4 font-semibold text-slate-900">{{ client.id }}</td>
+    <td class="px-6 py-4">
+      <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-mono font-bold rounded-lg border border-slate-200 uppercase">{{ client.customerCode }}</span>
+    </td>
+    <td class="px-6 py-4 font-mono text-xs text-slate-500 font-bold uppercase">
+      {{ client.taxIdentification }}
+    </td>
+    <td class="px-6 py-4">
+      <div class="font-medium text-slate-800">{{ client.fullName }}</div>
+      <div class="text-xs text-slate-400 max-w-xs truncate" title="{{ client.address }}">{{ client.address || 'Sin dirección registrada' }}</div>
+    </td>
+    <td class="px-6 py-4 space-y-0.5 text-xs text-slate-700">
+      <div class="flex items-center gap-1"><span>📞</span> {{ client.phoneNumber || 'Sin número' }}</div>
+      <div class="text-slate-400 truncate max-w-[180px]" title="{{ client.email }}">✉️ {{ client.email || 'Sin correo' }}</div>
+    </td>
+    <td class="px-6 py-4 text-center">
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+        <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span>Activo
+      </span>
+    </td>
+    <td class="px-6 py-4 text-center">
+      <div class="flex items-center justify-center gap-1">
+        <button (click)="onEdit(client.id)" title="Modificar Cliente" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition duration-150">✏️</button>
+        <button (click)="onDelete(client.id)" title="Desactivar" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition duration-150">🗑️</button>
+      </div>
+    </td>
+  </tr>
 
-        </tbody>
+</tbody>
       </table>
     </div>
   </div>

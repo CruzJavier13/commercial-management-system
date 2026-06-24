@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { GetCustomerDto } from '../../../core/models/customer.interface'; 
+import { CustomerService } from '../../../core/services/customer-service/customer.service';
 
 @Component({
   standalone: true,
@@ -11,40 +12,59 @@ import { GetCustomerDto } from '../../../core/models/customer.interface';
 })
 export class CustomerList implements OnInit {
   searchTerm = '';
+  
+  customersList: GetCustomerDto[] = [];
 
-  customersList: GetCustomerDto[] = [
-    {
-      id: 1,
-      customerCode: 'CLI-NAT-01',
-      fullName: 'María Auxiliadora López',
-      taxIdentification: '001-221094-1002J', 
-      phoneNumber: '+505 8888-1234',
-      email: 'maria.lopez@gmail.com',
-      address: 'Bello Horizonte, de la rotonda 2c al lago, Managua.',
-      isActive: true
-    },
-    {
-      id: 2,
-      customerCode: 'CLI-JUR-02',
-      fullName: 'Comercializadora e Inversiones del Norte S.A.',
-      taxIdentification: 'J0310000444555',
-      phoneNumber: '+505 2278-9000',
-      email: 'corporativo@inversionesnorte.com',
-      address: 'Km 9 Carretera a Masaya, Edificio Invercasa, Piso 3.',
-      isActive: true
-    }
-  ];
+  constructor(private customerService: CustomerService) {}
 
-  constructor() {}
+  ngOnInit(): void {
+    this.loadCustomers(); 
+  }
 
-  ngOnInit(): void {}
+  loadCustomers(): void {
+    this.customerService.getAll().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.customersList = response.data; 
+        } else {
+          console.error('Error reportado por la API:', response.error);
+        }
+      },
+      error: (err) => {
+        console.error('Fallo de comunicación con el servidor .NET:', err);
+      }
+    });
+  }
 
   onEdit(id: number): void {
+
     alert('Redireccionando de forma independiente a la edición del cliente ID: ' + id);
   }
 
   onDelete(id: number): void {
-    alert('Ejecutando procedimiento sal.usp_Customers_Delete para el ID: ' + id);
+    if (confirm('¿Está seguro de que desea desactivar lógicamente este cliente del sistema?')) {
+      this.customerService.delete(id).subscribe({
+        next: (response) => {
+          if (response.success) {
+            alert('Cliente desactivado con éxito.');
+            this.loadCustomers();
+          } else {
+            alert('No se pudo desactivar el registro: ' + response.error);
+          }
+        }
+      });
+    }
+  }
+  filterCustomers(): GetCustomerDto[] {
+    if (!this.searchTerm.trim()) {
+      return this.customersList;
+    }
+    const txt = this.searchTerm.toLowerCase().trim();
+    return this.customersList.filter(c => 
+      c.fullName.toLowerCase().includes(txt) || 
+      c.customerCode.toLowerCase().includes(txt) || 
+      c.taxIdentification.toLowerCase().includes(txt)
+    );
   }
 }
 

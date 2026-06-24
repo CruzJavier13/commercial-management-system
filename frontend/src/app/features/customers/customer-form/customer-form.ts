@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CreateCustomerDto } from '../../../core/models/customer.interface'; 
+import { CustomerService } from '../../../core/services/customer-service/customer.service';
 
 @Component({
   standalone: true,
@@ -21,7 +22,11 @@ export class CustomerForm implements OnInit {
     address: ''
   };
 
-  constructor(private router: Router) {}
+
+  constructor(
+    private customerService: CustomerService, 
+    private router: Router
+  ) {}
 
   ngOnInit(): void {}
 
@@ -51,8 +56,20 @@ export class CustomerForm implements OnInit {
       address: this.customerForm.address?.trim() ? this.customerForm.address.trim() : undefined
     };
 
-    alert('Despachando payload de cliente hacia .NET mediante ADO.NET:\n' + JSON.stringify(payloadToSave));
-    
-    this.router.navigate(['/customers/list']);
+
+    this.customerService.create(payloadToSave).subscribe({
+      next: (response) => {
+        if (response.success) {
+          alert('¡Ficha del cliente registrada con éxito en la base de datos de Variedades Mendoza!');
+          this.router.navigate(['/customers/list']);
+        } else {
+          alert('Error reportado por SQL Server: ' + response.error);
+        }
+      },
+      error: (err) => {
+        console.error('Error crítico de red al conectar al backend .NET:', err);
+        alert('Hubo un fallo crítico al conectar con la API. Revisa si el backend de .NET está encendido.');
+      }
+    });
   }
 }
