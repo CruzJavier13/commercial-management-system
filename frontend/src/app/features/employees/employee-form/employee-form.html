@@ -1,0 +1,109 @@
+<div class="w-full space-y-6 animate-fadeIn text-left">
+  
+
+  <div class="border-b border-slate-200 pb-4">
+    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Ficha de Contratación de Personal</h1>
+    <p class="text-sm text-slate-500 mt-1">Registra la información contractual del colaborador y genera de forma simultánea sus credenciales de acceso seguro al sistema.</p>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="space-y-6">
+
+    <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-6">
+      <div>
+        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+          <span class="text-blue-500">👔</span> Ficha Laboral del Colaborador
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Código de Empleado</label>
+          <input type="text" [(ngModel)]="employeeForm.employeeCode" name="employeeCode" required maxlength="50" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 font-mono uppercase transition duration-150" placeholder="Ej: EMP-ADM-03">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Cédula de Identidad</label>
+          <input type="text" [(ngModel)]="employeeForm.cardId" name="cardId" required maxlength="50" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 font-mono uppercase transition duration-150" placeholder="Ej: 001-150296-1002J">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Primer Nombre</label>
+          <input type="text" [(ngModel)]="employeeForm.firstName" name="firstName" required maxlength="50" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition duration-150">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Apellidos Completos</label>
+          <input type="text" [(ngModel)]="employeeForm.lastName" name="lastName" required maxlength="50" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition duration-150">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Cargo u Oficio</label>
+          <input type="text" [(ngModel)]="employeeForm.position" name="position" required maxlength="100" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition" placeholder="Ej: Cajero, Supervisor">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Salario Mensual Base ($)</label>
+          <input type="number" [(ngModel)]="employeeForm.baseSalary" name="baseSalary" required step="0.01" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 font-bold transition">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Número de Teléfono</label>
+          <input type="tel" [(ngModel)]="employeeForm.phoneNumber" name="phoneNumber" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition" placeholder="Ej: +505 8888-8888">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Fecha de Ingreso</label>
+          <input type="date" [(ngModel)]="employeeForm.hireDate" name="hireDate" required class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-6">
+      <div>
+        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+          <span class="text-blue-500">🛡️</span> Credenciales de Acceso al Sistema
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Selector de Rol Estilizado con Tailwind -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Rol / Nivel de Acceso</label>
+          <div class="relative">
+            <select [(ngModel)]="employeeForm.roleName" name="roleName" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition appearance-none cursor-pointer pr-10">
+              <option value="" disabled>-- Asigna un Rol --</option>
+              <option value="ADMINISTRADOR">⚙️ Administrador General</option>
+              <option value="CAJERO">🧾 Cajero / Operador POS</option>
+              <option value="INVENTARIADO">📊 Control de Inventarios</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">▼</div>
+          </div>
+        </div>
+
+        <!-- Cuenta de Usuario -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Nombre de Usuario (Login Account)</label>
+          <input type="text" [(ngModel)]="employeeForm.username" name="username" required class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 font-mono text-slate-700 transition" placeholder="Ej: jennifer.m">
+        </div>
+
+        <!-- Contraseña Privada -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-2 tracking-wide">Contraseña Temporal de Acceso</label>
+          <input type="password" [(ngModel)]="employeeForm.password" name="password" required class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition" placeholder="••••••••">
+        </div>
+      </div>
+    </div>
+
+    <!-- BARRA INFERIOR DE ACCIONES TRANSACCIONALES -->
+    <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
+      <a routerLink="/employees/list" class="px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition inline-flex items-center">
+        Cancelar y Volver
+      </a>
+      <button type="submit" class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">
+        Guardar Contratación Completa
+      </button>
+    </div>
+
+  </form>
+</div>

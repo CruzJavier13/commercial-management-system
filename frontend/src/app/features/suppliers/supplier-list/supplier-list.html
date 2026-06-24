@@ -1,1 +1,84 @@
-<p>supplier-list works!</p>
+<div class="w-full space-y-6 animate-fadeIn text-left">
+  
+
+  <div class="border-b border-slate-200 pb-4">
+    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Catálogo de Proveedores</h1>
+    <p class="text-sm text-slate-500 mt-1">Distribuidoras comerciales.</p>
+  </div>
+
+  <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="relative w-full sm:flex-1 max-w-xl">
+      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm">🔍</span>
+      <input type="text" [(ngModel)]="searchTerm" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-700 placeholder-slate-400 transition duration-150" placeholder="Filtrar instantáneamente por razón social, código o RUC...">
+    </div>
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-600 shrink-0">
+      <span>Proveedores Registrados:</span>
+      <span class="font-bold text-slate-800 text-sm">{{ suppliersList.length }}</span>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       LEVEL 3: GRILLA / TABLA DE REGISTROS COMERCIALES
+       ========================================================================= -->
+  <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <th class="px-6 py-4 w-16">ID</th>
+            <th class="px-6 py-4 w-36">Código</th>
+            <th class="px-6 py-4 w-44">Identificación Fiscal</th>
+            <th class="px-6 py-4">Razón Social / Empresa</th>
+            <th class="px-6 py-4 w-56">Contacto Directo</th>
+            <th class="px-6 py-4 w-28 text-center">Estado</th>
+            <th class="px-6 py-4 w-28 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 text-sm text-slate-600">
+          
+          <tr *ngIf="suppliersList.length === 0">
+            <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+              <div class="text-base font-medium mb-1">No se encontraron distribuidores activos</div>
+              <div class="text-xs">Usa la opción "+ Crear Nuevo" en el menú para dar de alta un proveedor.</div>
+            </td>
+          </tr>
+
+          <tr *ngFor="let sup of suppliersList" class="hover:bg-slate-50/60 transition duration-100 ease-in-out">
+            <td class="px-6 py-4 font-semibold text-slate-900">{{ sup.id }}</td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-mono font-bold rounded-lg border border-slate-200 uppercase">{{ sup.supplierCode }}</span>
+            </td>
+            <td class="px-6 py-4 font-mono text-xs text-slate-500 font-semibold uppercase">
+              {{ sup.taxIdentification }}
+            </td>
+            <td class="px-6 py-4">
+              <div class="font-medium text-slate-800">{{ sup.companyName }}</div>
+              <div class="text-xs text-slate-400 max-w-xs truncate" [title]="sup.address">{{ sup.address || 'Sin dirección física registrada' }}</div>
+            </td>
+            <td class="px-6 py-4 space-y-0.5 text-xs text-slate-700">
+              <div class="flex items-center gap-1"><span>📞</span> {{ sup.phoneNumber || 'Sin Teléfono' }}</div>
+              <div class="text-slate-400 truncate max-w-[180px]" [title]="sup.email">✉️ {{ sup.email || 'Sin Correo' }}</div>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span>Activo
+              </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <div class="flex items-center justify-center gap-1">
+                <button (click)="onEdit(sup.id)" title="Modificar Proveedor" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition duration-150">
+                  ✏️
+                </button>
+                <button (click)="onDelete(sup.id)" title="Desactivar" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition duration-150">
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

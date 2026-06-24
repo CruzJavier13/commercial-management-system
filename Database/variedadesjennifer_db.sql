@@ -125,7 +125,7 @@ CREATE TABLE prd.MedicineAttributes (
     ExpirationDateRequired BIT NOT NULL DEFAULT 1,
     RequiresPrescription BIT NOT NULL DEFAULT 0,
     IsActive BIT NOT NULL DEFAULT 1,
-    --CONSTRAINT FK_MedicineAttributes_Products FOREIGN KEY (ProductId) REFERENCES prd.Products(Id) ON DELETE CASCADE
+    CONSTRAINT FK_MedicineAttributes_Products FOREIGN KEY (ProductId) REFERENCES prd.Products(Id) 
 );
 GO
 
@@ -135,7 +135,7 @@ CREATE TABLE prd.DeviceAttributes (
     Model VARCHAR(100) NOT NULL,
     SerialNumberOrIMEI VARCHAR(100) NULL,
     WarrantyPeriodMonths INT NOT NULL DEFAULT 0,
-    CONSTRAINT FK_DeviceAttributes_Products FOREIGN KEY (ProductId) REFERENCES prd.Products(Id) ON DELETE CASCADE
+    CONSTRAINT FK_DeviceAttributes_Products FOREIGN KEY (ProductId) REFERENCES prd.Products(Id)
 );
 GO
 

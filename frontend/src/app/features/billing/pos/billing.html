@@ -1,0 +1,115 @@
+<div class="w-full flex flex-col lg:flex-row gap-6 h-[calc(100vh-100px)] animate-fadeIn text-left">
+  
+  <div class="flex-1 flex flex-col space-y-4 h-full">
+    <!-- Encabezado de la Terminal -->
+    <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl font-bold text-slate-800 tracking-tight">Terminal Punto de Venta (POS)</h1>
+        <p class="text-xs text-slate-500">Busca artículos para escanearlos o agregarlos directamente a la orden de venta actual.</p>
+      </div>
+      <div class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+        Caja Activa: <span class="text-emerald-600 font-bold">01</span>
+      </div>
+    </div>
+
+    <!-- Barra de Búsqueda Predictiva -->
+    <div class="bg-white p-3 rounded-2xl shadow-xs border border-slate-200">
+      <div class="relative w-full">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm">🔍</span>
+        <input type="text" [(ngModel)]="productSearchTerm" class="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-700 placeholder-slate-400 transition" placeholder="Escribe el nombre del artículo o escanea el código de barra con la pistola...">
+      </div>
+    </div>
+
+    <!-- Rejilla de Tarjetas de Productos Reales Disponibles (Scrollable) -->
+    <div class="flex-1 overflow-y-auto pr-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 content-start">
+      <div *ngFor="let item of productsCatalogs" (click)="addToCart(item)" class="bg-white p-4 rounded-2xl shadow-2xs border border-slate-200 hover:border-blue-500 hover:shadow-md transition duration-150 ease-in-out cursor-pointer flex flex-col justify-between h-40 group">
+        <div>
+          <div class="flex justify-between items-start gap-2">
+            <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 font-mono text-[10px] font-bold rounded border border-slate-200 uppercase">{{ item.productCode }}</span>
+            <span *ngIf="item.medicineAttributes" class="text-xs">🩺</span>
+            <span *ngIf="item.deviceAttributes" class="text-xs">📱</span>
+          </div>
+          <h4 class="font-bold text-slate-800 text-sm mt-2 line-clamp-2 group-hover:text-blue-600 transition">{{ item.name }}</h4>
+        </div>
+        <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100">
+          <span class="text-base font-extrabold text-slate-900">${{ item.basePrice | number:'1.2-2' }}</span>
+          <span class="text-xs font-semibold text-blue-600 group-hover:translate-x-1 transition-transform">Agregar ➔</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full lg:w-96 bg-white rounded-2xl shadow-xs border border-slate-200 flex flex-col h-full overflow-hidden">
+    
+    <!-- Cabecera del Resumen de Venta -->
+    <div class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🧾</span>
+        <h3 class="font-bold text-slate-800 text-sm">Resumen de Cuenta</h3>
+      </div>
+      <button (click)="clearCart()" class="text-xs font-medium text-red-500 hover:text-red-700 transition">Vaciar Todo</button>
+    </div>
+
+    <!-- Contenedor del Listado de Productos Agregados (Scrollable) -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-3">
+      <!-- Mensaje por si la caja está vacía -->
+      <div *ngIf="cartItems.length === 0" class="h-full flex flex-col items-center justify-center text-slate-400 py-12">
+        <span class="text-3xl mb-2">🛒</span>
+        <p class="text-xs font-medium">No hay artículos cargados en la orden</p>
+      </div>
+
+      <!-- Fila de Artículo en Carrito -->
+      <div *ngFor="let item of cartItems" class="flex items-center justify-between gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 animate-fadeIn">
+        <div class="flex-1 min-w-0">
+          <h5 class="text-xs font-bold text-slate-800 truncate" [title]="item.productName">{{ item.productName }}</h5>
+          <span class="text-[11px] text-slate-400 font-medium">${{ item.unitPrice | number:'1.2-2' }} c/u</span>
+        </div>
+        <!-- Controladores de Cantidades -->
+        <div class="flex items-center gap-2">
+          <button (click)="updateQuantity(item, -1)" class="w-6 h-6 rounded-lg bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 flex items-center justify-center font-bold text-sm">-</button>
+          <span class="text-xs font-bold text-slate-800 w-4 text-center">{{ item.quantity }}</span>
+          <button (click)="updateQuantity(item, 1)" class="w-6 h-6 rounded-lg bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 flex items-center justify-center font-bold text-sm">+</button>
+        </div>
+        <!-- Total de Línea -->
+        <div class="text-right min-w-[60px]">
+          <span class="text-xs font-bold text-slate-900">${{ item.lineTotal | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-200 bg-slate-50 space-y-4">
+      
+      <!-- Configuración del Método de Pago -->
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Método de Pago</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button (click)="paymentMethod = 'EFECTIVO'" [ngClass]="paymentMethod === 'EFECTIVO' ? 'bg-emerald-600 text-white border-transparent' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'" class="py-2 text-[11px] font-bold border rounded-xl transition shadow-2xs">💵 Efectivo</button>
+          <button (click)="paymentMethod = 'TARJETA'" [ngClass]="paymentMethod === 'TARJETA' ? 'bg-emerald-600 text-white border-transparent' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'" class="py-2 text-[11px] font-bold border rounded-xl transition shadow-2xs">💳 Tarjeta</button>
+          <button (click)="paymentMethod = 'TRANSFERENCIA'" [ngClass]="paymentMethod === 'TRANSFERENCIA' ? 'bg-emerald-600 text-white border-transparent' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'" class="py-2 text-[11px] font-bold border rounded-xl transition shadow-2xs">📲 Transf.</button>
+        </div>
+      </div>
+
+      <!-- Desglose Financiero -->
+      <div class="space-y-1.5 border-t border-slate-200 pt-3 text-xs">
+        <div class="flex justify-between text-slate-500">
+          <span>Sub-Total Bruto:</span>
+          <span class="font-medium font-mono">${{ subTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between text-slate-500">
+          <span>Impuestos Reales (IVA 15%):</span>
+          <span class="font-medium font-mono">${{ taxAmount | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between text-base font-extrabold text-slate-900 border-t border-dashed border-slate-300 pt-2">
+          <span>TOTAL A COBRAR:</span>
+          <span class="text-emerald-600 font-mono">${{ totalAmount | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- Acción Maestra de Registro Transaccional -->
+      <button (click)="checkoutInvoice()" [disabled]="cartItems.length === 0" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl shadow-md transition duration-150 flex items-center justify-center gap-2">
+        <span>⚡</span> Procesar y Facturar Venta
+      </button>
+    </div>
+
+  </div>
+</div>

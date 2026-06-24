@@ -1,0 +1,104 @@
+<aside class="w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 min-h-screen">
+  <!-- Encabezado -->
+  
+  <a routerLink="/home" class="p-5 border-b border-slate-800 block hover:bg-slate-800/40 transition cursor-pointer group">
+    <h1 class="text-xl font-bold text-white tracking-wide group-hover:text-blue-400 transition">Variedades Mendoza</h1>
+    <span class="text-xs text-slate-500">Panel de Administración General</span>
+  </a>
+  
+  <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+    
+    <!-- 📦 1. MÓDULO DE PRODUCTOS -->
+    <div>
+      <button (click)="toggleMenu('products')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition duration-150 text-left">
+        <span class="flex items-center space-x-3"><span>📦</span> <span>Productos</span></span>
+        <span class="text-xs transition-transform duration-200" [ngClass]="{'rotate-180': isProductsOpen}">▼</span>
+      </button>
+      <!-- Submenú de Productos -->
+      <div class="mt-1 pl-9 space-y-1 overflow-hidden transition-all duration-200" [ngClass]="isProductsOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'">
+        <a routerLink="/products/list" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">🔍 Listar y Buscar</a>
+        <a routerLink="/products/create" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">➕ Crear Nuevo</a>
+      </div>
+    </div>
+
+    <!-- 📂 2. MÓDULO DE CATEGORÍAS -->
+    <div>
+      <button (click)="toggleMenu('categories')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition duration-150 text-left" [ngClass]="{'bg-blue-600/20 text-blue-400': isCategoriesOpen}">
+        <span class="flex items-center space-x-3"><span>📂</span> <span>Categorías</span></span>
+        <span class="text-xs transition-transform duration-200" [ngClass]="{'rotate-180': isCategoriesOpen}">▼</span>
+      </button>
+      <!-- Submenú de Categorías -->
+      <div class="mt-1 pl-9 space-y-1 overflow-hidden transition-all duration-200" [ngClass]="isCategoriesOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'">
+        <a routerLink="/categories/list" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">🔍 Listar y Buscar</a>
+        <a routerLink="/categories/create" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">➕ Crear Nueva</a>
+      </div>
+    </div>
+
+    <!-- 🏭 3. MÓDULO DE PROVEEDORES -->
+    <div>
+      <button (click)="toggleMenu('suppliers')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition duration-150 text-left">
+        <span class="flex items-center space-x-3"><span>🏭</span> <span>Proveedores</span></span>
+        <span class="text-xs transition-transform duration-200" [ngClass]="{'rotate-180': isSuppliersOpen}">▼</span>
+      </button>
+      <!-- Submenú de Proveedores -->
+      <div class="mt-1 pl-9 space-y-1 overflow-hidden transition-all duration-200" [ngClass]="isSuppliersOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'">
+        <a routerLink="/suppliers/list" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">🔍 Listar y Buscar</a>
+        <a routerLink="/suppliers/create" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">➕ Crear Nuevo</a>
+      </div>
+    </div>
+
+    <!-- 📊 4. MÓDULO DE INVENTARIO -->
+    <div>
+      <button (click)="toggleMenu('inventory')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition duration-150 text-left">
+        <span class="flex items-center space-x-3"><span>📊</span> <span>Inventario</span></span>
+        <span class="text-xs transition-transform duration-200" [ngClass]="{'rotate-180': isInventoryOpen}">▼</span>
+      </button>
+      <!-- Submenú de Inventario -->
+      <div class="mt-1 pl-9 space-y-1 overflow-hidden transition-all duration-200" [ngClass]="isInventoryOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'">
+        <a routerLink="/inventory/dashboard" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">📈 Dashboard General</a>
+        <a routerLink="/inventory/transactions" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">🔄 Movimientos Kárdex</a>
+      </div>
+    </div>
+
+     <div>
+      <button (click)="toggleMenu('customers')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition duration-150 text-left">
+        <span class="flex items-center space-x-3"><span>👥</span> <span>Clientes</span></span>
+        <span class="text-xs transition-transform duration-200" [ngClass]="{'rotate-180': isCustomersOpen}">▼</span>
+      </button>
+      <div class="mt-1 pl-9 space-y-1 overflow-hidden transition-all duration-200" [ngClass]="isCustomersOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'">
+        <a routerLink="/customers/list" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">🔍 Listar Clientes</a>
+        <a routerLink="/customers/create" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">➕ Nuevo Cliente</a>
+      </div>
+    </div>
+
+    <div>
+      <button (click)="toggleMenu('employees')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition duration-150 text-left">
+        <span class="flex items-center space-x-3"><span>👔</span> <span>Empleados</span></span>
+        <span class="text-xs transition-transform duration-200" [ngClass]="{'rotate-180': isEmployeesOpen}">▼</span>
+      </button>
+      <div class="mt-1 pl-9 space-y-1 overflow-hidden transition-all duration-200" [ngClass]="isEmployeesOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'">
+        <a routerLink="/employees/list" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">🔍 Personal Activo</a>
+        <a routerLink="/employees/create" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">➕ Registrar Empleado</a>
+      </div>
+    </div>
+
+    <div>
+      <button (click)="toggleMenu('billing')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition duration-150 text-left" [ngClass]="{'bg-emerald-600/20 text-emerald-400': isBillingOpen}">
+        <span class="flex items-center space-x-3"><span class="text-emerald-500">🧾</span> <span class="font-semibold">Facturación / Caja</span></span>
+        <span class="text-xs transition-transform duration-200" [ngClass]="{'rotate-180': isBillingOpen}">▼</span>
+      </button>
+      <div class="mt-1 pl-9 space-y-1 overflow-hidden transition-all duration-200" [ngClass]="isBillingOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'">
+        <a routerLink="/billing/pos" routerLinkActive="text-emerald-400 font-medium" class="block py-1.5 text-sm hover:text-white transition font-medium text-emerald-500">🛒 Nueva Venta (POS)</a>
+        <a routerLink="/billing/history" routerLinkActive="text-blue-500 font-medium" class="block py-1.5 text-sm hover:text-white transition">📜 Historial de Facturas</a>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- Botón de Salida -->
+  <div class="p-4 border-t border-slate-800">
+    <a routerLink="/login" class="flex items-center space-x-3 px-4 py-2.5 rounded-xl hover:bg-red-900/30 hover:text-red-400 transition duration-150">
+      <span>🚪 Cerrar Sesión</span>
+    </a>
+  </div>
+</aside>

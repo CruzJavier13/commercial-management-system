@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { GetCategoryDto } from '../../models/category.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,11 @@ export class CategoryService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  create(categoryDto: any): Observable<any> {
+  create(categoryDto: GetCategoryDto): Observable<any> {
     return this.http.post<any>(this.apiUrl, categoryDto);
   }
 
-  update(id: number, categoryDto: any): Observable<any> {
+  update(id: number, categoryDto: GetCategoryDto): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, categoryDto);
   }
 

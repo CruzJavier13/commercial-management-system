@@ -1,1 +1,104 @@
-<p>product-list works!</p>
+<div class="w-full space-y-6 animate-fadeIn text-left">
+  
+  <!-- LEVEL 1: ENCABEZADO MINIMALISTA -->
+  <div class="border-b border-slate-200 pb-4">
+    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Catálogo de Productos</h1>
+    <p class="text-sm text-slate-500 mt-1">Consulta, filtra y gestiona de forma global el inventario y las fichas técnicas polimórficas del negocio.</p>
+  </div>
+
+  <!-- LEVEL 2: BARRA OPERATIVA DE BÚSQUEDA -->
+  <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="relative w-full sm:flex-1 max-w-xl">
+      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm">🔍</span>
+      <input type="text" [(ngModel)]="searchTerm" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-700 placeholder-slate-400 transition duration-150" placeholder="Filtrar instantáneamente por nombre, código de barra o SKU...">
+    </div>
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-600 shrink-0">
+      <span>Artículos en Catálogo:</span>
+      <span class="font-bold text-slate-800 text-sm">{{ productsList.length }}</span>
+    </div>
+  </div>
+
+  <!-- LEVEL 3: GRILLA / TABLA DE REGISTROS POLIMÓRFICOS COMPLETOS -->
+  <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <th class="px-6 py-4 w-16">ID</th>
+            <th class="px-6 py-4 w-40">Código / SKU</th>
+            <th class="px-6 py-4 w-72">Nombre del Artículo</th>
+            <!-- 📝 COLUMNA MAESTRA POLIMÓRFICA ADICIONAL -->
+            <th class="px-6 py-4">Especificaciones del Sector</th>
+            <th class="px-6 py-4 w-36 text-right">Precio Venta</th>
+            <th class="px-6 py-4 w-28 text-center">Estado</th>
+            <th class="px-6 py-4 w-28 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 text-sm text-slate-600">
+          
+          <tr *ngIf="productsList.length === 0">
+            <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+              <div class="text-base font-medium mb-1">No se encontraron artículos activos</div>
+              <div class="text-xs">Usa la opción "+ Crear Nuevo" en el menú para registrar productos.</div>
+            </td>
+          </tr>
+
+          <!-- ITERACIÓN DE REGISTROS -->
+          <tr *ngFor="let prod of productsList" class="hover:bg-slate-50/60 transition duration-100 ease-in-out">
+            <td class="px-6 py-4 font-semibold text-slate-900">{{ prod.id }}</td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-mono font-bold rounded-lg border border-slate-200 uppercase">{{ prod.productCode }}</span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="font-medium text-slate-800">{{ prod.name }}</div>
+              <div class="text-xs text-slate-400 max-w-xs truncate" [title]="prod.description">{{ prod.description || 'Sin descripción asignada' }}</div>
+            </td>
+
+            <!-- 🚀 RENDERIZADO CONDICIONAL DE EXTENSIONES POLIMÓRFICAS (Todas tus columnas SQL) -->
+            <td class="px-6 py-4">
+              <!-- Caso A: Si el producto tiene extensión médica (prd.MedicineAttributes) -->
+              <div *ngIf="prod.medicineAttributes" class="space-y-1 text-xs">
+                <div class="font-medium text-emerald-700 flex items-center gap-1">🧪 Comp: <span class="text-slate-700 font-normal">{{ prod.medicineAttributes.activeIngredient }}</span></div>
+                <div class="text-slate-500 font-mono">Reg. Sanitario: {{ prod.medicineAttributes.healthRegisterNumber }}</div>
+                <div class="flex gap-1.5 mt-1">
+                  <span *ngIf="prod.medicineAttributes.requiresPrescription" class="px-1.5 py-0.5 bg-red-50 text-red-600 rounded border border-red-200 font-medium scale-90 origin-left">⚠️ Requiere Receta</span>
+                  <span *ngIf="prod.medicineAttributes.expirationDateRequired" class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded border border-slate-200 scale-90 origin-left">Control Lote</span>
+                </div>
+              </div>
+
+              <!-- Caso B: Si el producto tiene extensión de dispositivo (prd.DeviceAttributes) -->
+              <div *ngIf="prod.deviceAttributes" class="space-y-1 text-xs">
+                <div class="font-medium text-blue-700 flex items-center gap-1">📱 Marca: <span class="text-slate-700 font-normal">{{ prod.deviceAttributes.brand }} — Mdl: {{ prod.deviceAttributes.model }}</span></div>
+                <div *ngIf="prod.deviceAttributes.serialNumberOrIMEI" class="text-slate-500 font-mono">S/N: {{ prod.deviceAttributes.serialNumberOrIMEI }}</div>
+                <div class="mt-1"><span class="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-200 font-medium scale-90 origin-left">Garantía: {{ prod.deviceAttributes.warrantyPeriodMonths }} meses</span></div>
+              </div>
+
+              <!-- Caso C: Si es un servicio virtual plano o no tiene extensiones -->
+              <div *ngIf="!prod.medicineAttributes && !prod.deviceAttributes">
+                <span *ngIf="prod.isVirtualService" class="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-medium rounded-lg border border-purple-200">🔮 Servicio Intangible</span>
+                <span *ngIf="!prod.isVirtualService" class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-medium rounded-lg border border-slate-200">📦 Mercancía General</span>
+              </div>
+            </td>
+
+            <td class="px-6 py-4 text-right font-semibold text-slate-900">
+              ${{ prod.basePrice | number:'1.2-2' }}
+            </td>
+            <td class="px-6 py-4 text-center">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span>Activo
+              </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <div class="flex items-center justify-center gap-1">
+                <button (click)="onEdit(prod.id)" title="Modificar Ficha" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition duration-150">✏️</button>
+                <button (click)="onDelete(prod.id)" title="Dar de Baja" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition duration-150">🗑️</button>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

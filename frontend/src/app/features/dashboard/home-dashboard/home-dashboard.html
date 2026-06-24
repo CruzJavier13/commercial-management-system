@@ -1,0 +1,114 @@
+<div class="w-full space-y-8 animate-fadeIn text-left">
+  
+  <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-2xl shadow-sm border border-slate-700 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">¡Bienvenido de nuevo, Administrador!</h1>
+      <p class="text-sm text-slate-400 mt-1">Este es el estado operativo global para Variedades Mendoza. Control de inventario, personal y caja.</p>
+    </div>
+    <div class="flex items-center gap-3 bg-slate-800/60 px-4 py-2 rounded-xl border border-slate-700 text-xs font-medium">
+      <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+      <span>Servidor API .NET: <span class="text-emerald-400 font-bold">Conectado</span></span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+    <!-- KPI 1: Ventas Brutas -->
+    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex items-center justify-between">
+      <div class="space-y-1">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ventas del Día</span>
+        <div class="text-2xl font-extrabold text-slate-800 font-mono">$1,407.60</div>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">💵</div>
+    </div>
+
+    <!-- KPI 2: Ordenes Emitidas -->
+    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex items-center justify-between">
+      <div class="space-y-1">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Facturas Emitidas</span>
+        <div class="text-2xl font-extrabold text-slate-800 font-mono">2</div>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold">🧾</div>
+    </div>
+
+    <!-- KPI 3: Alertas de Stock -->
+    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex items-center justify-between">
+      <div class="space-y-1">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Alertas Kárdex</span>
+        <div class="text-2xl font-extrabold text-red-600 font-mono">1</div>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-xl font-bold">⚠️</div>
+    </div>
+
+    <!-- KPI 4: Colaboradores Activos -->
+    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex items-center justify-between">
+      <div class="space-y-1">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Colaboradores</span>
+        <div class="text-2xl font-extrabold text-slate-800 font-mono">2</div>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold">👔</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Bloque Izquierdo: Accesos Directos Operativos (Ocupa 2 columnas) -->
+    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-4">
+      <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">🚀 Accesos Rápidos de Caja e Inventario</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a routerLink="/billing/pos" class="p-4 bg-slate-50 border border-slate-200 rounded-xl hover:border-emerald-500 hover:bg-emerald-50/20 transition flex items-center gap-3">
+          <span class="text-2xl">🛒</span>
+          <div>
+            <h4 class="font-bold text-slate-800 text-sm">Abrir Terminal POS</h4>
+            <p class="text-xs text-slate-400">Escanear código de barras y facturar.</p>
+          </div>
+        </a>
+        <a routerLink="/products/create" class="p-4 bg-slate-50 border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50/20 transition flex items-center gap-3">
+          <span class="text-2xl">📦</span>
+          <div>
+            <h4 class="font-bold text-slate-800 text-sm">Ficha de Producto</h4>
+            <p class="text-xs text-slate-400">Registrar nuevo artículo.</p>
+          </div>
+        </a>
+        <a routerLink="/inventory/dashboard" class="p-4 bg-slate-50 border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50/20 transition flex items-center gap-3">
+          <span class="text-2xl">📊</span>
+          <div>
+            <h4 class="font-bold text-slate-800 text-sm">Disponibilidad Stock</h4>
+            <p class="text-xs text-slate-400">Verificar topes máximos y mínimos.</p>
+          </div>
+        </a>
+        <a routerLink="/inventory/transactions" class="p-4 bg-slate-50 border border-slate-200 rounded-xl hover:border-purple-500 hover:bg-purple-50/20 transition flex items-center gap-3">
+          <span class="text-2xl">🗃️</span>
+          <div>
+            <h4 class="font-bold text-slate-800 text-sm">Auditoría Kárdex</h4>
+            <p class="text-xs text-slate-400">Ver entradas, salidas o mermas.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Bloque Derecho: Resumen del Sistema de Seguridad -->
+    <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 flex flex-col justify-between">
+      <div class="space-y-4">
+        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">🛡️ Estado de Seguridad</h3>
+        <div class="space-y-3 text-xs">
+          <div class="flex justify-between border-b border-slate-100 pb-2">
+            <span class="text-slate-400">Usuario Activo:</span>
+            <span class="font-semibold text-slate-800 font-mono">jennifer.m</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-100 pb-2">
+            <span class="text-slate-400">Rol Autorizado:</span>
+            <span class="px-2 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-md border border-blue-100">ADMINISTRADOR</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-100 pb-2">
+            <span class="text-slate-400">Token JWT:</span>
+            <span class="text-emerald-600 font-bold">Vigente y Firmado</span>
+          </div>
+        </div>
+      </div>
+      <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center text-[11px] text-slate-500 font-medium mt-4">
+        Filtros de control y auditoría.
+      </div>
+    </div>
+
+  </div>
+</div>
