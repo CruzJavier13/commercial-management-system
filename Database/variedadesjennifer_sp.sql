@@ -831,12 +831,12 @@ BEGIN
 END;
 GO
 
-CREATE PROCEDURE bil.sp_Invoice_GetById
+CREATE OR ALTER PROCEDURE bil.sp_Invoice_GetById
     @Id INT
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT Id, InvoiceNumber, CustomerId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate 
+    SELECT Id, InvoiceNumber, CustomerId, EmployeeId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate 
     FROM bil.Invoices WHERE Id = @Id;
 
     SELECT Id, InvoiceId, ProductId, Quantity, PriceBilled, TaxRate, LineTotal 
@@ -844,11 +844,11 @@ BEGIN
 END;
 GO
 
-CREATE PROCEDURE bil.sp_Invoice_GetAll
+CREATE OR ALTER PROCEDURE bil.sp_Invoice_GetAll
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT Id, InvoiceNumber, CustomerId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate 
+    SELECT Id, InvoiceNumber, CustomerId, EmployeeId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate 
     FROM bil.Invoices ORDER BY InvoiceDate DESC;
 END;
 GO
