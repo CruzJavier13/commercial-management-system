@@ -57,6 +57,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors("AngularCorsPolicy");
+
 app.UseAuthorization();
 
 app.MapControllers();

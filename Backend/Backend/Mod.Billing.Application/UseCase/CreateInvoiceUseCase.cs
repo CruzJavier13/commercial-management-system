@@ -21,7 +21,7 @@ public class CreateInvoiceUseCase
     {
 
         if (string.IsNullOrWhiteSpace(dto.InvoiceNumber))
-            throw new ArgumentException("El número de factura no puede estar vacío.");
+            dto.InvoiceNumber = "FAC-" + DateTime.Now.ToString("yyyyMMddHHmmss");
 
         if (dto.CustomerId <= 0)
             throw new ArgumentException("El código de cliente debe ser un identificador válido.");
