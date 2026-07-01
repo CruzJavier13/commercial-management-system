@@ -32,6 +32,16 @@ VALUES
 ('EMP-0004', 'Ana', 'Martínez', '001-040498-0004D', 'SS-0004', '8888-0004', 'Masaya'),
 ('EMP-0005', 'Pedro', 'Sánchez', '001-050188-0005E', 'SS-0005', '8888-0005', 'León');
 GO
+
+INSERT INTO emp.Salary (EmployeeId, BaseSalary, IsActive)
+VALUES 
+(1, 22000.00, 1),  -- 👤 ID 1 (Juan Pérez - Administrador: C$ 22,000)
+(2, 25000.00, 1),  -- 👤 ID 2 (María López - Gerente General: C$ 25,000)
+(3, 14500.00, 1),  -- 👤 ID 3 (Carlos García - Cajero Central: C$ 14,500)
+(4, 16000.00, 1),  -- 👤 ID 4 (Ana Martínez - Encargada Inventario: C$ 16,000)
+(5, 18500.00, 1);  -- 👤 ID 5 (Pedro Sánchez - Farmacéutico Regente: C$ 18,500)
+
+GO
 INSERT INTO emp.session_auth
 (
     EmployeeId,

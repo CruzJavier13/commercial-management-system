@@ -1,27 +1,47 @@
+export interface SessionAuthDto {
+  roleId: number;
+  systemUsername: string;
+  passwordHash?: string | null;
+}
+
 export interface GetEmployeeDto {
   id: number;
   employeeCode: string;
   firstName: string;
   lastName: string;
-  cardId: string;           // Número de cédula física
-  position: string;         // Cargo en la tienda (Ej: Cajero)
+  identificationNumber: string;          
+  position: string;         
   baseSalary: number;
   phoneNumber?: string;
-  hireDate: string;         // Fecha de ingreso ISO
+  createdAt: string;         
   isActive: boolean;
+  
+  roleId: number | null;
+  roleName: string | null; 
+  roleCode: string | null;
+  systemUsername: string | null;
+  passwordHash: string | null;
 }
 
 export interface CreateEmployeeDto {
   employeeCode: string;
   firstName: string;
   lastName: string;
-  cardId: string;
-  position: string;
+  indentificationNumber: string;
+  position: number;
   baseSalary: number;
   phoneNumber?: string;
-  hireDate: string;
+  createdAt: string;
 
-  roleName: 'ADMINISTRADOR' | 'CAJERO' | 'SUPERVISOR' | 'INVENTARIADO' | ''; 
+  roleId: number; 
   username: string;
   password: string; 
+}
+
+export interface GetRole{
+  Id: number;
+  RoleCode: string;
+  Name: string;
+  Description: string;
+  IsActive: boolean;
 }

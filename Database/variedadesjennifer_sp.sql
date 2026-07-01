@@ -54,6 +54,7 @@ CREATE OR ALTER PROCEDURE emp.usp_Employees_Save
     @Phone VARCHAR(20),
     @Address VARCHAR(255) = NULL,
     @IsActive BIT = 1,
+    @BaseSalary DECIMAL(10,2),
 
     @RoleId INT,
     @SystemUsername VARCHAR(50),
@@ -84,6 +85,9 @@ BEGIN
 
             INSERT INTO emp.session_auth (EmployeeId, RoleId, SystemUsername, PasswordHash, IsActive)
             VALUES (@CurrentEmployeeId, @RoleId, @SystemUsername, @PasswordHash, @IsActive);
+
+            INSERT INTO emp.Salary (EmployeeId, BaseSalary, IsActive)
+            VALUES (@CurrentEmployeeId, @BaseSalary, @IsActive)
         END
         
 
@@ -107,6 +111,10 @@ BEGIN
                 PasswordHash = ISNULL(@PasswordHash, PasswordHash), 
                 IsActive = @IsActive
             WHERE EmployeeId = @CurrentEmployeeId;
+
+            UPDATE emp.Salary
+            SET BaseSalary = @BaseSalary
+            WHERE EmployeeId = @CurrentEmployeeId
         END
 
         COMMIT TRANSACTION;
@@ -138,11 +146,16 @@ BEGIN
            e.Address, 
            e.IsActive, 
            e.CreatedAt,
+           sl.BaseSalary,
+           rl.Name as RoleName,
+           rl.RoleCode,
            sa.RoleId, 
            sa.SystemUsername, 
            sa.PasswordHash
     FROM emp.Employees e
     LEFT JOIN emp.session_auth sa ON e.Id = sa.EmployeeId
+    LEFT JOIN emp.Salary sl ON e.Id = sl.EmployeeId
+    LEFT JOIN emp.Roles rl ON rl.Id = sa.RoleId
     WHERE e.IsActive = 1;
 END;
 GO
@@ -163,14 +176,35 @@ BEGIN
            e.Address, 
            e.IsActive, 
            e.CreatedAt,
+           sl.BaseSalary,
+           rl.Name as RoleName,
+           rl.RoleCode,
            sa.RoleId, 
            sa.SystemUsername, 
            sa.PasswordHash
     FROM emp.Employees e
     LEFT JOIN emp.session_auth sa ON e.Id = sa.EmployeeId
-    WHERE e.Id = @Id;
+    LEFT JOIN emp.Salary sl ON e.Id = sl.EmployeeId
+    LEFT JOIN emp.Roles rl ON rl.Id = sa.RoleId
+    WHERE e.Id = @Id AND e.IsActive = 1;
 END;
+GO
+CREATE OR ALTER PROCEDURE emp.usp_Employees_Delete
+@Id INT
+AS
+BEGIN
+    UPDATE emp.Employees
+    SET IsActive = 0
+    WHERE Id = @Id
 
+    UPDATE emp.session_auth
+    SET IsActive = 0
+    WHERE EmployeeId = @Id
+
+    UPDATE emp.Salary
+    SET IsActive = 0
+    Where EmployeeId = @Id
+END
 GO
 
 -- =========================================================================

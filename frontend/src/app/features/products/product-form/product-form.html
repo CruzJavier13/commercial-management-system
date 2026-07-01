@@ -33,7 +33,9 @@
         <div class="relative">
           <select [(ngModel)]="productForm.supplierId" name="supplierId" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition duration-150 appearance-none cursor-pointer pr-10">
             <option value="0" disabled>-- Asigna un Distribuidor --</option>
-            <option *ngFor="let sup of suppliers" [value]="sup.id">🏢 {{ sup.companyName }}</option>
+            @for (sup of suppliers; track sup.id) {
+                <option [value]="sup.id">🏢 {{ sup.companyName }}</option>
+            }
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">▼</div>
         </div>
@@ -50,7 +52,9 @@
         <div class="relative">
           <select [(ngModel)]="productForm.categoryId" name="categoryId" (change)="onCategoryChange($event)" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition duration-150 appearance-none cursor-pointer pr-10">
             <option value="0" disabled>-- Selecciona el Sector --</option>
-            <option *ngFor="let cat of categories" [value]="cat.id">📁 {{ cat.name }} ({{ cat.categoryCode }})</option>
+            @for (cat of categories; track cat.id) {
+                <option [value]="cat.id">📁 {{ cat.name }} ({{ cat.categoryCode }})</option>
+            }
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">▼</div>
         </div>

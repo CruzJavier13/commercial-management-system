@@ -10,7 +10,7 @@ import { GetSupplierDto, CreateSupplierDto } from '../../models/supplier';
 export class SupplierService {
   
 
-  private apiUrl = 'https://localhost:7111/api/suppliers';
+  private apiUrl = 'http://localhost:5263/api/suppliers';
 
   constructor(private http: HttpClient) { }
 

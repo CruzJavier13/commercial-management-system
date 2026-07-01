@@ -43,6 +43,14 @@ CREATE TABLE emp.Employees (
     CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
 );
 GO
+CREATE TABLE emp.Salary(
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    EmployeeId INT NOT NULL,
+    BaseSalary DECIMAL(10,2) NOT NULL,
+    IsActive BIT DEFAULT 1
+    CONSTRAINT FK_Salary_Employee FOREIGN KEY (EmployeeId) REFERENCES emp.Employees(Id)
+);
+GO
 
 CREATE TABLE emp.session_auth(
     Id INT IDENTITY(1,1) PRIMARY KEY,

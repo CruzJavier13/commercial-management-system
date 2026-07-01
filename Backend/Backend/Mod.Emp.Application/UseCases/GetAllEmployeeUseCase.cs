@@ -1,4 +1,5 @@
 ﻿using Mod.Emp.Application.DTOs;
+using Mod.Emp.Domain.Entities;
 using Mod.Emp.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -36,8 +37,15 @@ namespace Mod.Emp.Application.UseCases
                 Phone = emp.Phone,
                 Address = emp.Address,
                 IsActive = emp.IsActive,
-                CreatedAt = emp.CreatedAt
-            }).ToList();
-        }
-    }
+                CreatedAt = emp.CreatedAt,
+                BaseSalary = emp.BaseSalary,
+                RoleName = emp.RoleName,
+                RoleCode = emp.RoleCode,
+
+                RoleId = emp.RoleId,
+                SystemUsername = emp.SystemUsername,
+                PasswordHash = emp.PasswordHash,
+            } );
+        }    
+    } 
 }

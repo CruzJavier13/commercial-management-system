@@ -2,7 +2,7 @@ export interface GetCustomerDto {
   id: number;
   customerCode: string;
   fullName: string;
-  taxIdentification: string; // Cédula o RUC Nicaragüense
+  identificationNumber: string; // Cédula o RUC Nicaragüense
   phoneNumber?: string;
   email?: string;
   address?: string;
@@ -12,7 +12,7 @@ export interface GetCustomerDto {
 export interface CreateCustomerDto {
   customerCode: string;
   fullName: string;
-  taxIdentification: string;
+  identificationNumber: string;
   phoneNumber?: string;
   email?: string;
   address?: string;

@@ -18,6 +18,8 @@ namespace Mod.Emp.Application.DTOs
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public virtual Session? SessionAuth { get; set; }
+        public int? RoleId { get; set; }
+        public string? SystemUsername { get; set; }
+        public string? PasswordHash { get; set; }
     }
 }

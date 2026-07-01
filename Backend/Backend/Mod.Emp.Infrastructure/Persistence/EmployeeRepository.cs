@@ -5,6 +5,7 @@ using Mod.Emp.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection.PortableExecutable;
 using System.Text;
 
 namespace Mod.Emp.Infrastructure.Persistence
@@ -55,7 +56,14 @@ namespace Mod.Emp.Infrastructure.Persistence
                     Phone = reader.GetString(reader.GetOrdinal("Phone")),
                     Address = reader.IsDBNull(reader.GetOrdinal("Address")) ? string.Empty : reader.GetString(reader.GetOrdinal("Address")),
                     IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
-                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
+                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                    BaseSalary = reader.IsDBNull(reader.GetOrdinal("BaseSalary")) ? 0m : reader.GetDecimal(reader.GetOrdinal("BaseSalary")),
+                    RoleName = reader.GetString(reader.GetOrdinal("RoleName")),
+                    RoleCode = reader.GetString(reader.GetOrdinal("RoleCode")),
+
+                    RoleId = reader.IsDBNull(reader.GetOrdinal("RoleId")) ? null : reader.GetInt32(reader.GetOrdinal("RoleId")),
+                    SystemUsername = reader.IsDBNull(reader.GetOrdinal("SystemUsername")) ? null : reader.GetString(reader.GetOrdinal("SystemUsername")),
+                    PasswordHash = reader.IsDBNull(reader.GetOrdinal("PasswordHash")) ? null : reader.GetString(reader.GetOrdinal("PasswordHash"))
                 });
             }
 
@@ -86,7 +94,14 @@ namespace Mod.Emp.Infrastructure.Persistence
                 Phone = reader.GetString(reader.GetOrdinal("Phone")), 
                 Address = reader.IsDBNull(reader.GetOrdinal("Address")) ? string.Empty : reader.GetString(reader.GetOrdinal("Address")),
                 IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
-                CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
+                CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                BaseSalary = reader.IsDBNull(reader.GetOrdinal("BaseSalary")) ? 0m : reader.GetDecimal(reader.GetOrdinal("BaseSalary")),
+                RoleName = reader.GetString(reader.GetOrdinal("RoleName")),
+                RoleCode = reader.GetString(reader.GetOrdinal("RoleCode")),
+
+                RoleId = reader.IsDBNull(reader.GetOrdinal("RoleId")) ? null : reader.GetInt32(reader.GetOrdinal("RoleId")),
+                SystemUsername = reader.IsDBNull(reader.GetOrdinal("SystemUsername")) ? null : reader.GetString(reader.GetOrdinal("SystemUsername")),
+                PasswordHash = reader.IsDBNull(reader.GetOrdinal("PasswordHash")) ? null : reader.GetString(reader.GetOrdinal("PasswordHash"))
             };
         }
 
@@ -107,6 +122,7 @@ namespace Mod.Emp.Infrastructure.Persistence
             command.Parameters.AddWithValue("@Phone", t.Phone);
             command.Parameters.AddWithValue("@Address", t.Address ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("@IsActive", t.IsActive);
+            command.Parameters.AddWithValue("@BaseSalary", t.BaseSalary);
 
             command.Parameters.AddWithValue("@RoleId", t.SessionAuth?.RoleId ?? 0);
             command.Parameters.AddWithValue("@SystemUsername", t.SessionAuth?.SystemUsername ?? string.Empty);
@@ -132,6 +148,7 @@ namespace Mod.Emp.Infrastructure.Persistence
             command.Parameters.AddWithValue("@Phone", t.Phone);
             command.Parameters.AddWithValue("@Address", t.Address ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("@IsActive", t.IsActive);
+            command.Parameters.AddWithValue("@BaseSalary", t.BaseSalary);
 
             command.Parameters.AddWithValue("@RoleId", t.SessionAuth?.RoleId ?? 0);
             command.Parameters.AddWithValue("@SystemUsername", t.SessionAuth?.SystemUsername ?? string.Empty);

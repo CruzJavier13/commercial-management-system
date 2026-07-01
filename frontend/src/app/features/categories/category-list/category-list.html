@@ -1,30 +1,24 @@
-<div class="space-y-6 animate-fadeIn">
+<div class="space-y-6 animate-fadeIn text-left">
   
-  <!-- =========================================================================
-       LEVEL 1: ENCABEZADO MINIMALISTA (Sin botón duplicado de Crear)
-       ========================================================================= -->
+  <!-- ENCABEZADO DE GRUPO -->
   <div class="border-b border-slate-200 pb-4">
     <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Catálogo de Categorías</h1>
     <p class="text-sm text-slate-500 mt-1">Consulta y gestiona de forma global las agrupaciones del inventario comercial.</p>
   </div>
 
-  <!-- =========================================================================
-       LEVEL 2: BARRA OPERATIVA DE BÚSQUEDA Y FILTRADO (Ancho Completo)
-       ========================================================================= -->
+  <!-- BARRA OPERATIVA DE BÚSQUEDA Y CONTEO -->
   <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
     <div class="relative w-full sm:flex-1 max-w-xl">
       <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm">🔍</span>
-      <input type="text" [(ngModel)]="searchTerm" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-700 placeholder-slate-400 transition duration-150" placeholder="Filtrar instantáneamente por nombre o código de categoría...">
+      <input type="text" [(ngModel)]="searchTerm" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-700 placeholder-slate-400 transition" placeholder="Filtrar instantáneamente por nombre o código de categoría...">
     </div>
     <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-600 shrink-0">
       <span>Registros Activos:</span>
-      <span class="font-bold text-slate-800 text-sm">{{ categoriesList.length }}</span>
+      <span class="font-bold text-slate-800 text-sm">{{ filterCategories().length }}</span>
     </div>
   </div>
 
-  <!-- =========================================================================
-       LEVEL 3: GRILLA / TABLA DE REGISTROS (Estilizada y Limpia)
-       ========================================================================= -->
+  <!-- GRILLA ANALÍTICA DE SECTORES (prd.Categories) -->
   <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
@@ -34,40 +28,111 @@
             <th class="px-6 py-4 w-28">Código</th>
             <th class="px-6 py-4 w-64">Nombre Categoría</th>
             <th class="px-6 py-4">Descripción</th>
-            <th class="px-6 py-4 w-28">Estado</th>
+            <th class="px-6 py-4 w-40">Creado</th>
+            <th class="px-6 py-4 w-28 text-center">Estado</th>
             <th class="px-6 py-4 w-28 text-center">Acciones</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200 text-sm text-slate-600">
-          <!-- 🛠️ ITERACIÓN DE REGISTROS -->
-          <tr *ngFor="let cat of categoriesList" class="hover:bg-slate-50/60 transition duration-100 ease-in-out">
-            <td class="px-6 py-4 font-semibold text-slate-900">{{ cat.id }}</td>
-            <td class="px-6 py-4">
-              <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-mono font-bold rounded-lg border border-slate-200">{{ cat.categoryCode }}</span>
-            </td>
-            <td class="px-6 py-4 font-medium text-slate-800">{{ cat.name }}</td>
-            <td class="px-6 py-4 text-slate-500 max-w-md truncate" [title]="cat.description">{{ cat.description || 'Sin descripción asignada' }}</td>
-            <td class="px-6 py-4">
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
-                <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span>{{ cat.isActive ? 'Activo' : 'Inactivo' }}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-center">
-              <div class="flex items-center justify-center gap-1">
-                <!-- Botón Editar (Lápiz) -->
-                <button (click)="onEdit(cat.id)" title="Modificar Categoría" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition duration-150">
-                  ✏️
-                </button>
-                <!-- Botón Eliminar (Bote Basura) -->
-                <button (click)="onDelete(cat.id)" title="Desactivar Categoría" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition duration-150">
-                  🗑️
-                </button>
-              </div>
-            </td>
-          </tr>
+          
+          @for (cat of filterCategories(); track cat.id) {
+            <tr class="hover:bg-slate-50/60 transition duration-100">
+              <td class="px-6 py-4 font-semibold text-slate-900">{{ cat.id }}</td>
+              <td class="px-6 py-4">
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-mono font-bold rounded-lg border border-slate-200 uppercase shadow-2xs">{{ cat.categoryCode }}</span>
+              </td>
+              <td class="px-6 py-4 font-medium text-slate-800">{{ cat.name }}</td>
+              <td class="px-6 py-4 truncate max-w-xs text-slate-500" [title]="cat.description || 'Sin notas'">
+                {{ cat.description || 'Sin descripción asignada' }}
+              </td>
+              <td class="px-6 py-4 font-mono text-xs text-slate-400">
+                {{ cat.createdAt | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+              <td class="px-6 py-4 text-center">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span>Activo
+                </span>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <!-- ✏️ CORREGIDO: Ahora el click le pasa el objeto completo 'cat' de la fila al modal -->
+                  <button (click)="openEditModal(cat)" title="Modificar Categoría" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition">
+                    ✏️
+                  </button>
+                  <button (click)="onDelete(cat.id)" title="Desactivar" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition">
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+                <div class="text-base font-medium mb-1">No se encontraron categorías comerciales activas</div>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
   </div>
 
+  <!-- =========================================================================
+       🛡️ INTERFAZ DE MODAL FLOTANTE: FORMULARIO DE EDICIÓN ASÍNCRONA
+       ========================================================================= -->
+  @if (isModalOpen) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
+      <div class="bg-white w-full max-w-lg p-6 rounded-2xl shadow-xl border border-slate-200 animate-slideUp space-y-5 mx-4">
+        
+        <!-- Cabecera del Modal -->
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div>
+            <h3 class="text-lg font-bold text-slate-800 tracking-tight">Editar Ficha de Categoría</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Modificando el identificador numérico interno: <span class="font-mono font-bold text-blue-600">ID #{{ selectedCategoryId }}</span></p>
+          </div>
+          <button (click)="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold p-1">✕</button>
+        </div>
+
+        <!-- Cuerpo del Formulario Bindeado -->
+        <form (ngSubmit)="onUpdateSubmit()" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5 tracking-wide">Código Único (Fijo)</label>
+            <input type="text" [(ngModel)]="editForm.categoryCode" name="categoryCode" disabled class="w-full px-3 py-2.5 text-sm bg-slate-100 border border-slate-200 rounded-xl text-slate-400 font-mono uppercase cursor-not-allowed">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5 tracking-wide">Nombre de la Categoría</label>
+            <input type="text" [(ngModel)]="editForm.name" name="name" required maxlength="100" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5 tracking-wide">Descripción Comercial</label>
+            <textarea rows="3" [(ngModel)]="editForm.description" name="description" maxlength="250" class="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 transition resize-none"></textarea>
+          </div>
+
+          <!-- Acciones Transaccionales Inferiores -->
+          <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
+            <button type="button" (click)="closeModal()" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">
+              Cancelar
+            </button>
+            <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">
+              Actualizar Cambios
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  }
+
 </div>
+
+<app-confirm-modal
+  [isOpen]="isDeleteModalOpen"
+  [itemId]="idToDelete"
+  title="¿Dar de Baja Categoría?"
+  description="Se deshabilitará esta agrupación. Ningún cajero podrá asociar nuevos productos a este sector en el kárdex."
+  type="DANGER"
+  (onConfirm)="executeDeleteLogic($event)"
+  (onClose)="isDeleteModalOpen = false">
+</app-confirm-modal>

@@ -40,7 +40,15 @@ namespace Mod.Emp.Application.UseCases
                 Phone = emp.Phone,
                 Address = emp.Address,
                 IsActive = emp.IsActive,
-                CreatedAt = emp.CreatedAt
+                CreatedAt = emp.CreatedAt,
+                BaseSalary = emp.BaseSalary,
+                RoleName = emp.RoleName,
+                RoleCode = emp.RoleCode,
+
+
+                RoleId = emp.RoleId,
+                SystemUsername = emp.SystemUsername,
+                PasswordHash = emp.PasswordHash,
             };
         }
     }

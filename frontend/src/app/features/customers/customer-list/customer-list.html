@@ -42,13 +42,14 @@
   </tr>
 
   <!-- 🚀 EL BUCLE OFICIAL: Utiliza estrictamente 'of' apuntando a tu función computada -->
-  <tr *ngFor="let client of filterCustomers()" class="hover:bg-slate-50/60 transition duration-100 ease-in-out">
+   @for (client of filterCustomers(); track client.id) {
+  <tr class="hover:bg-slate-50/60 transition duration-100 ease-in-out">
     <td class="px-6 py-4 font-semibold text-slate-900">{{ client.id }}</td>
     <td class="px-6 py-4">
       <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-mono font-bold rounded-lg border border-slate-200 uppercase">{{ client.customerCode }}</span>
     </td>
     <td class="px-6 py-4 font-mono text-xs text-slate-500 font-bold uppercase">
-      {{ client.taxIdentification }}
+      {{ client.identificationNumber || 'Sin cédula/RUC' }}
     </td>
     <td class="px-6 py-4">
       <div class="font-medium text-slate-800">{{ client.fullName }}</div>
@@ -70,10 +71,20 @@
       </div>
     </td>
   </tr>
-
+}
 </tbody>
       </table>
     </div>
   </div>
 
 </div>
+
+<app-confirm-modal
+  [isOpen]="isDeleteModalOpen"
+  [itemId]="idToDelete"
+  title="¿Dar de Baja Categoría?"
+  description="Se deshabilitará esta agrupación. Ningún cajero podrá asociar nuevos productos a este sector en el kárdex."
+  type="DANGER"
+  (onConfirm)="executeDeleteLogic($event)"
+  (onClose)="isDeleteModalOpen = false">
+</app-confirm-modal>

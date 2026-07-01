@@ -16,7 +16,7 @@ export class CustomerForm implements OnInit {
   customerForm: CreateCustomerDto = {
     customerCode: '',
     fullName: '',
-    taxIdentification: '',
+    identificationNumber: '',
     email: '',
     phoneNumber: '',
     address: ''
@@ -37,7 +37,7 @@ export class CustomerForm implements OnInit {
       return;
     }
 
-    if (!this.customerForm.taxIdentification || !this.customerForm.taxIdentification.trim()) {
+    if (!this.customerForm.identificationNumber || !this.customerForm.identificationNumber.trim()) {
       alert('La identificación fiscal (Cédula / RUC) es obligatoria.');
       return;
     }
@@ -49,11 +49,11 @@ export class CustomerForm implements OnInit {
 
     const payloadToSave: CreateCustomerDto = {
       customerCode: this.customerForm.customerCode.trim().toUpperCase(),
-      taxIdentification: this.customerForm.taxIdentification.trim().toUpperCase(),
-      fullName: this.customerForm.fullName.trim(),
-      email: this.customerForm.email?.trim() ? this.customerForm.email.trim().toLowerCase() : undefined,
-      phoneNumber: this.customerForm.phoneNumber?.trim() ? this.customerForm.phoneNumber.trim() : undefined,
-      address: this.customerForm.address?.trim() ? this.customerForm.address.trim() : undefined
+      identificationNumber: this.customerForm.identificationNumber.trim().toUpperCase(),
+      fullName: this.customerForm.fullName?.trim() || '',
+      email: this.customerForm.email?.trim() ? this.customerForm.email.trim().toLowerCase() : '',
+      phoneNumber: this.customerForm.phoneNumber?.trim() ? this.customerForm.phoneNumber.trim() : '',
+      address: this.customerForm.address?.trim() ? this.customerForm.address.trim() : ''
     };
 
 
