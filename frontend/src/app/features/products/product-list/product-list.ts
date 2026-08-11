@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { GetProductDto } from '../../../core/models/product.interface';
 import { ProductService } from '../../../core/services/product-service/product.service';
@@ -18,17 +18,21 @@ export class ProductList {
   idToDelete = 0;
 
   productsList!: GetProductDto[];
-  constructor(private productService: ProductService) {}
+  //constructor(private productService: ProductService) {}
+
+  constructor(private productService: ProductService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadProducts();
   }
+
 
   loadProducts(): void {
     this.productService.getAll().subscribe({
       next: (response) => {
         if (response.success) {
           this.productsList = response.data;
+          this.cdr.detectChanges();
         } else {
           console.error('Error reportado por el servidor API:', response.error);
         }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CreateCategoryDto, GetCategoryDto } from '../../../core/models/category.interface';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -27,7 +27,7 @@ export class CategoryList implements OnInit{
     description: ''
   };
 
-  constructor(private categoryService: CategoryService) {}
+  constructor(private categoryService: CategoryService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadCategories(); 
@@ -37,7 +37,8 @@ export class CategoryList implements OnInit{
     this.categoryService.getAll().subscribe({
       next: (response) => {
         if (response.success) {
-          this.Category = response.data; 
+          this.Category = response.data;
+          this.cdr.detectChanges();
         }
       },
       error: (err) => console.error('Fallo de red en la grilla:', err)
@@ -60,6 +61,7 @@ export class CategoryList implements OnInit{
   closeModal(): void {
     this.isModalOpen = false;
     this.selectedCategoryId = 0;
+    this.cdr.detectChanges();
   }
 
   onUpdateSubmit(): void {
@@ -74,9 +76,8 @@ export class CategoryList implements OnInit{
     this.categoryService.update(this.selectedCategoryId, payloadToUpdate).subscribe({
       next: (response) => {
         if (response.success) {
-          alert('¡Ficha de categoría modificada exitosamente en SQL Server!');
+          //alert('¡Ficha de categoría modificada exitosamente en SQL Server!');
           
-
           this.closeModal();
           
           this.loadCategories(); 

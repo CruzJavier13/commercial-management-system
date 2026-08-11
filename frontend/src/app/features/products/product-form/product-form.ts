@@ -51,14 +51,17 @@ export class ProductForm implements OnInit {
     });
   }
 
-  onCategoryChange(event: Event): void {
-    const selectedId = +(event.target as HTMLSelectElement).value;
-    const matchedCategory = this.categories.find(c => c.id === selectedId);
+  onCategoryChange(selectedId: number): void {
+    const id = +selectedId; 
+    
+    this.productForm.categoryId = id;
 
-    // Muta el formulario comparando con los códigos reales de tu base de datos (ELEC, FARM, etc.)
-    if (matchedCategory?.categoryCode === 'FARM') {
+    const matchedCategory = this.categories.find(c => c.id === id);
+
+
+    if (matchedCategory?.categoryCode === 'MED') {
       this.formType = 'MEDICINA';
-    } else if (matchedCategory?.categoryCode === 'ELEC') {
+    } else if (matchedCategory?.categoryCode === 'ELEC' || matchedCategory?.categoryCode === 'DEV') {
       this.formType = 'ELECTRONICA';
     } else {
       this.formType = 'GENERAL';

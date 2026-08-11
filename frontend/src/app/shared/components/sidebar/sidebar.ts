@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './sidebar.html'
 })
 export class SidebarComponent {
+
   isProductsOpen = false;
   isCategoriesOpen = false;
   isSuppliersOpen = false;
