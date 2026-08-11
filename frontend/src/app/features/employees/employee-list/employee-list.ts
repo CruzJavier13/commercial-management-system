@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // 
 import { GetEmployeeDto } from '../../../core/models/employee.interface'; 
@@ -18,7 +18,7 @@ export class EmployeeList implements OnInit {
 
   employeesList: GetEmployeeDto[] = [];
 
-  constructor(private employeeService: EmployeeService) {}
+  constructor(private employeeService: EmployeeService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadEmployees(); 
@@ -29,7 +29,8 @@ export class EmployeeList implements OnInit {
       next: (response) => {
         if (response.success) {
           this.employeesList = response.data;
-          console.log('Lista de personal cargada con éxito:', this.employeesList);
+          this.cdr.detectChanges();
+          //console.log('Lista de personal cargada con éxito:', this.employeesList);
         } else {
           console.error('Error de API al listar personal:', response.error);
         }

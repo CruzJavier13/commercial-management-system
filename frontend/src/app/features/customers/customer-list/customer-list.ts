@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { GetCustomerDto } from '../../../core/models/customer.interface'; 
@@ -19,7 +19,7 @@ export class CustomerList implements OnInit {
 
   customersList: GetCustomerDto[] = [];
 
-  constructor(private customerService: CustomerService) {}
+  constructor(private customerService: CustomerService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadCustomers(); 
@@ -29,7 +29,8 @@ export class CustomerList implements OnInit {
     this.customerService.getAll().subscribe({
       next: (response) => {
         if (response.success) {
-          this.customersList = response.data; 
+          this.customersList = response.data;
+          this.cdr.detectChanges();
         } else {
           console.error('Error reportado por la API:', response.error);
         }
