@@ -211,7 +211,8 @@ GO
 -- Procedure Auth
 -- =========================================================================
 CREATE OR ALTER PROCEDURE emp.usp_Auth_Login
-    @SystemUsername VARCHAR(50)
+    @Username VARCHAR(50),
+    @PasswordHash VARCHAR(255)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -230,7 +231,8 @@ BEGIN
     FROM emp.session_auth sa
     INNER JOIN emp.Employees e ON sa.EmployeeId = e.Id
     INNER JOIN emp.Roles r ON sa.RoleId = r.Id
-    WHERE sa.SystemUsername = @SystemUsername;
+    INNER JOIN emp.session_auth s ON s.EmployeeId = sa.EmployeeId
+    WHERE sa.SystemUsername = @Username AND sa.PasswordHash = @PasswordHash;
 END;
 GO
 

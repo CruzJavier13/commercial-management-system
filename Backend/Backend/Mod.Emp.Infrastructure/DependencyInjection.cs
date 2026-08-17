@@ -1,8 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Mod.Emp.Application.DTOs;
+using Mod.Emp.Application.Interfaces;
 using Mod.Emp.Application.UseCases;
+using Mod.Emp.Application.UseCases.Auth;
 using Mod.Emp.Domain.Repositories;
 using Mod.Emp.Infrastructure.Persistence;
+using Mod.Emp.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,6 +29,13 @@ namespace Mod.Emp.Infrastructure
             services.AddScoped<GetByIdEmployeeUseCase>();
             services.AddScoped<UpdateEmployeeUseCase>();
             services.AddScoped<DeleteEmployeeUseCase>();
+
+            // Registrar el repositorio de sesión
+            services.AddScoped<ISessionRepository<LoginRequestDto, LoginResponseDto>>(provider =>
+                new SessionRepository(connectionString));
+
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<LoginUseCase>();
 
             return services;
         }

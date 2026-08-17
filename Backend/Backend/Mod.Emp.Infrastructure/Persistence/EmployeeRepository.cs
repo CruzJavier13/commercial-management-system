@@ -12,7 +12,7 @@ namespace Mod.Emp.Infrastructure.Persistence
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly string _connectionString;
+        private readonly string _connectionString; 
 
         public EmployeeRepository(string connectionString)
         {

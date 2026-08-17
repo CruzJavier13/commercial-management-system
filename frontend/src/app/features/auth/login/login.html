@@ -8,21 +8,79 @@
         Ingresa tus credenciales para acceder al panel
       </p>
     </div>
-    <form class="mt-8 space-y-6">
+
+    <!-- Enlazamos el formulario de Angular y el método al enviar -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
+      
+      <!-- Mensaje de error general usando el nuevo Control Flow @if -->
+      @if (errorMessage) {
+        <div class="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg text-center animate-pulse">
+          {{ errorMessage }}
+        </div>
+      }
+
       <div class="rounded-md shadow-sm space-y-4">
+        <!-- Bloque de Usuario -->
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-1">Usuario</label>
-          <input type="text" required class="appearance-none rounded-lg relative block w-full px-3 py-2.5 border border-slate-600 bg-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" placeholder="nombre de usuario">
+          <input 
+            type="text" 
+            formControlName="username"
+            class="appearance-none rounded-lg relative block w-full px-3 py-2.5 border bg-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition duration-150"
+            [class.border-red-500]="loginForm.get('username')?.touched && loginForm.get('username')?.invalid"
+            [class.focus:ring-red-500]="loginForm.get('username')?.touched && loginForm.get('username')?.invalid"
+            [class.border-slate-600]="!(loginForm.get('username')?.touched && loginForm.get('username')?.invalid)"
+            placeholder="nombre de usuario">
+          
+          <!-- Alerta visual de validación con @if -->
+          @if (loginForm.get('username')?.touched && loginForm.get('username')?.invalid) {
+            <span class="text-xs text-red-400 mt-1 block">
+              El nombre de usuario es obligatorio.
+            </span>
+          }
         </div>
+
+        <!-- Bloque de Contraseña -->
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-1">Contraseña</label>
-          <input type="password" required class="appearance-none rounded-lg relative block w-full px-3 py-2.5 border border-slate-600 bg-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" placeholder="••••••••">
+          <input 
+            type="password" 
+            formControlName="password"
+            class="appearance-none rounded-lg relative block w-full px-3 py-2.5 border bg-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition duration-150"
+            [class.border-red-500]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+            [class.focus:ring-red-500]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+            [class.border-slate-600]="!(loginForm.get('password')?.touched && loginForm.get('password')?.invalid)"
+            placeholder="••••••••">
+          
+          <!-- Alerta visual de validación con @if -->
+          @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+            <span class="text-xs text-red-400 mt-1 block">
+              La contraseña es obligatoria.
+            </span>
+          }
         </div>
       </div>
 
+      <!-- Botón de Envío Dinámico -->
       <div>
-        <button type="submit" class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-blue-500 transition duration-150">
-          Iniciar Sesión
+        <button 
+          type="submit" 
+          [disabled]="isLoading"
+          class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-blue-500 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed">
+          
+          <!-- Control Flow @if / @else para cambiar el texto del botón -->
+          @if (!isLoading) {
+            <span>Iniciar Sesión</span>
+          } @else {
+            <span class="flex items-center gap-2">
+              <svg class="animate-spin h-4 w-4 text-white" xmlns="http://w3.org" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Validando...
+            </span>
+          }
+
         </button>
       </div>
     </form>
