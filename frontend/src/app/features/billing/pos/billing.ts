@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GetProductDto } from '../../../core/models/product.interface';
 import { InvoiceDetailDto, CreateInvoiceDto } from '../../../core/models/billing.interface';
 import { BillingService } from '../../../core/services/billing-service/billing.service';
 import { Router } from '@angular/router';
+import { ProductService } from '../../../core/services/product-service/product.service';
 
 @Component({
   standalone: true,
@@ -13,30 +14,52 @@ import { Router } from '@angular/router';
   templateUrl: './billing.html'
 })
 export class Billing implements OnInit {
+  //private productService = inject(ProductService);
+ //private billingService = inject(BillingService)
+  private router = inject(Router);
+
+  // Filtros y estados del Punto de Venta
   productSearchTerm = '';
   paymentMethod: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' = 'EFECTIVO';
+  isLoadingProducts = false;
 
-  // Totales matemáticos financieros
   subTotal = 0;
   taxAmount = 0;
   totalAmount = 0;
 
-
   cartItems: InvoiceDetailDto[] = [];
 
+  productsCatalogs: any[] = [];
 
-  productsCatalogs: any[] = [
-    { id: 101, productCode: 'SKU-APPLE-15PM', name: 'iPhone 15 Pro Max 256GB', basePrice: 1199.00, deviceAttributes: {} },
-    { id: 102, productCode: 'SKU-MK-ACET500', name: 'Acetaminofén 500mg MK (Caja 100 Tab)', basePrice: 8.50, medicineAttributes: {} },
-    { id: 103, productCode: 'SKU-GEN-MUSE', name: 'Mouse Inalámbrico Ergonómico Logistics', basePrice: 25.00 }
-  ];
+  constructor(private productService: ProductService, private billingService: BillingService, private cdr: ChangeDetectorRef) { }
 
-  constructor(
-    private billingService: BillingService,
-    private router: Router
-  ) { }
+  ngOnInit(): void {
+    this.getProductsFromBackend();
+  }
 
-  ngOnInit(): void { }
+
+  getProductsFromBackend(search: string = ''): void {
+    this.isLoadingProducts = true;
+    
+    this.productService.getAll(search).subscribe({
+      next: (response) => {
+ 
+        this.productsCatalogs = response.data;
+        this.isLoadingProducts = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al conectar con el catálogo de productos .NET:', err);
+        this.isLoadingProducts = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onSearchChange(): void {
+
+    this.getProductsFromBackend(this.productSearchTerm);
+  }
 
   addToCart(product: any): void {
     const existingItem = this.cartItems.find(item => item.productId === product.id);
@@ -49,7 +72,7 @@ export class Billing implements OnInit {
         productName: product.name,
         productCode: product.productCode,
         quantity: 1,
-        unitPrice: product.basePrice,
+        unitPrice: product.basePrice, 
         discountAmount: 0,
         lineTotal: product.basePrice
       };
@@ -69,10 +92,9 @@ export class Billing implements OnInit {
     this.calculateInvoiceTotals();
   }
 
-
   calculateInvoiceTotals(): void {
     this.subTotal = this.cartItems.reduce((acc, item) => acc + item.lineTotal, 0);
-    this.taxAmount = this.subTotal * 0.15;
+    this.taxAmount = this.subTotal * 0.15; // 15% IVA aplicable en Nicaragua
     this.totalAmount = this.subTotal + this.taxAmount;
   }
 
@@ -81,8 +103,12 @@ export class Billing implements OnInit {
     this.calculateInvoiceTotals();
   }
 
-
   checkoutInvoice(): void {
+    if (this.cartItems.length === 0) {
+      alert('El carrito de compras está vacío. No hay artículos para facturar.');
+      return;
+    }
+
     const finalInvoicePayload: CreateInvoiceDto = {
       customerId: 1,
       employeeId: 2,
@@ -90,9 +116,9 @@ export class Billing implements OnInit {
       details: this.cartItems
     };
 
-    alert('Despachando Orden de Caja al endpoint de .NET (sal.Invoices):\n' + JSON.stringify(finalInvoicePayload));
     this.billingService.createInvoice(finalInvoicePayload).subscribe({
       next: (response) => {
+  
         if (response.success) {
           alert('¡Venta procesada con éxito! Stock rebajado en Kárdex y factura asentada contablemente.');
           this.clearCart(); 
@@ -101,11 +127,9 @@ export class Billing implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Fallo de red:', err);
+        console.error('Fallo de red al facturar:', err);
         alert('Error crítico de comunicación: El módulo de caja no pudo conectar con la API de .NET.');
       }
     });
-
-    //this.clearCart();
   }
 }

@@ -19,8 +19,9 @@ export class ProductService {
   
   public totalProducts = computed(() => this.productState().length);
 
-  getAll(): Observable<ApiResponse<GetProductDto[]>> {
-    return this.http.get<ApiResponse<GetProductDto[]>>(this.apiUrl).pipe(
+  getAll(search: string = ''): Observable<ApiResponse<GetProductDto[]>> {
+    const url = search ? `${this.apiUrl}?search=${search}` : this.apiUrl;
+    return this.http.get<ApiResponse<GetProductDto[]>>(url).pipe(
       map(response => {
         if (response && response.data) {
           this.productState.set(response.data);

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth-service/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,6 +10,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './sidebar.html'
 })
 export class SidebarComponent {
+
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  onLogout(): void {
+
+    this.authService.logout();
+
+    this.router.navigate(['/login']);
+  }
 
   isProductsOpen = false;
   isCategoriesOpen = false;

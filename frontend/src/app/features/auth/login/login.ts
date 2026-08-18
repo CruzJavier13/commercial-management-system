@@ -20,7 +20,6 @@ export class Login {
   public isLoading: boolean = false;
 
   constructor() {
-
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(3)]]
@@ -52,5 +51,6 @@ export class Login {
         console.error('Error en el login:', err);
       }
     });
+    //this.router.navigate(['/dashboard']);
   }
 }

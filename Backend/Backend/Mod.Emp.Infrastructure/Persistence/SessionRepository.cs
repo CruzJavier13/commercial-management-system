@@ -33,7 +33,7 @@ namespace Mod.Emp.Infrastructure.Persistence
             if (await reader.ReadAsync())
             {
                 string databaseHash = reader.GetString(reader.GetOrdinal("PasswordHash")).Trim();
-                string hashFrescoEnMemoria = BCrypt.Net.BCrypt.HashPassword("cajero1");
+
                 bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Username, databaseHash);
 
                 if (!isPasswordValid) return null;
