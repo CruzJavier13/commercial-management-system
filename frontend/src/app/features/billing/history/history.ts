@@ -129,4 +129,14 @@ export class History implements OnInit {
       details
     ].join('\n'));
   }
+
+  printReport(): void {
+    
+  }
+
+  startDate: string = '';
+  endDate: string = '';
+
+  filterReport(): void {
+  }
 }

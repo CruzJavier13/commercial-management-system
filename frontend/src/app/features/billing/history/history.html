@@ -10,6 +10,40 @@
       <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm">🔍</span>
       <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-700 placeholder-slate-400 transition" placeholder="Filtrar facturas por número consecutivo, cliente o cajero...">
     </div>
+
+    <div class="flex flex-wrap items-center gap-4 w-full sm:w-auto bg-white">
+  
+  <!-- Fecha Inicio -->
+  <div class="flex flex-col gap-1">
+    <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Fecha Inicio</label>
+    <input type="date" 
+           [(ngModel)]="startDate" 
+           (ngModelChange)="filterReport()"
+           class="w-40 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+  </div>
+
+  <!-- Fecha Fin -->
+  <div class="flex flex-col gap-1">
+    <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Fecha Fin</label>
+    <input type="date" 
+           [(ngModel)]="endDate" 
+           (ngModelChange)="filterReport()"
+           class="w-40 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+  </div>
+
+  <!-- Botón Imprimir -->
+  <button type="button"
+          (click)="printReport()" 
+          class="self-end h-[34px] inline-flex items-center gap-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-medium transition-colors cursor-pointer shadow-xs">
+    <!-- Icono de Impresora SVG -->
+    <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.82l2.6-2.6m0 0l2.6 2.6m-2.6-2.6V18M18 14v4.75A2.25 2.25 0 0115.75 21H8.25A2.25 2.25 0 016 18.75V14m12-.08V10.5A5.25 5.25 0 007.5 10.5v3.42M12 21c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9-4.03 9-9 9z" />
+    </svg>
+    Imprimir Reporte
+  </button>
+
+</div>
+
     <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-600 shrink-0">
       <span>Ventas Registradas:</span>
       <span class="font-bold text-slate-800 text-sm">{{ filteredInvoices().length }}</span>

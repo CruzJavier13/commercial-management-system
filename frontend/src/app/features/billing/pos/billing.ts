@@ -21,6 +21,7 @@ export class Billing implements OnInit {
   // Filtros y estados del Punto de Venta
   productSearchTerm = '';
   paymentMethod: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' = 'EFECTIVO';
+  searchCustomer = '';
   
   isLoadingProducts = false;
 
@@ -162,5 +163,9 @@ export class Billing implements OnInit {
         alert('Error crítico de comunicación: El módulo de caja no pudo conectar con la API de .NET.');
       }
     });
+  }
+
+  onSearchCustomer(): void {
+    console.log('Búsqueda de cliente:', this.searchCustomer);
   }
 }
