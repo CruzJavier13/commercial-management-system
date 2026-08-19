@@ -6,6 +6,7 @@ import { InvoiceDetailDto, CreateInvoiceDto } from '../../../core/models/billing
 import { BillingService } from '../../../core/services/billing-service/billing.service';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../core/services/product-service/product.service';
+import { AuthService } from '../../../core/services/auth-service/auth.service';
 
 @Component({
   standalone: true,
@@ -14,13 +15,13 @@ import { ProductService } from '../../../core/services/product-service/product.s
   templateUrl: './billing.html'
 })
 export class Billing implements OnInit {
-  //private productService = inject(ProductService);
- //private billingService = inject(BillingService)
   private router = inject(Router);
+  private readonly taxRate = 0.15;
 
   // Filtros y estados del Punto de Venta
   productSearchTerm = '';
   paymentMethod: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' = 'EFECTIVO';
+  
   isLoadingProducts = false;
 
   subTotal = 0;
@@ -31,7 +32,10 @@ export class Billing implements OnInit {
 
   productsCatalogs: any[] = [];
 
-  constructor(private productService: ProductService, private billingService: BillingService, private cdr: ChangeDetectorRef) { }
+  constructor(private productService: ProductService, 
+              private billingService: BillingService,   
+              private authService: AuthService, 
+              private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.getProductsFromBackend();
@@ -62,19 +66,19 @@ export class Billing implements OnInit {
   }
 
   addToCart(product: any): void {
-    const existingItem = this.cartItems.find(item => item.productId === product.id);
+    const existingItem = this.cartItems.find(item => item.ProductId === product.id);
 
     if (existingItem) {
       this.updateQuantity(existingItem, 1);
     } else {
       const newItem: InvoiceDetailDto = {
-        productId: product.id,
-        productName: product.name,
-        productCode: product.productCode,
-        quantity: 1,
-        unitPrice: product.basePrice, 
-        discountAmount: 0,
-        lineTotal: product.basePrice
+        ProductId: product.id,
+        ProductName: product.name,
+        ProductCode: product.productCode,
+        Quantity: 1,
+        UnitPrice: Number(product.basePrice),
+        DiscountAmount: 0,
+        LineTotal: Number(product.basePrice)
       };
       this.cartItems.push(newItem);
       this.calculateInvoiceTotals();
@@ -82,48 +86,75 @@ export class Billing implements OnInit {
   }
 
   updateQuantity(item: InvoiceDetailDto, amount: number): void {
-    item.quantity += amount;
+    item.Quantity += amount;
 
-    if (item.quantity <= 0) {
-      this.cartItems = this.cartItems.filter(i => i.productId !== item.productId);
+    if (item.Quantity <= 0) {
+      this.cartItems = this.cartItems.filter(i => i.ProductId !== item.ProductId);
     } else {
-      item.lineTotal = item.quantity * item.unitPrice - item.discountAmount;
+      item.LineTotal = Number(item.Quantity) * Number(item.UnitPrice) - Number(item.DiscountAmount || 0);
     }
     this.calculateInvoiceTotals();
   }
 
   calculateInvoiceTotals(): void {
-    this.subTotal = this.cartItems.reduce((acc, item) => acc + item.lineTotal, 0);
-    this.taxAmount = this.subTotal * 0.15; // 15% IVA aplicable en Nicaragua
+    this.subTotal = this.cartItems.reduce((acc, item) => acc + Number(item.LineTotal || 0), 0);
+    this.taxAmount = this.subTotal * this.taxRate;
     this.totalAmount = this.subTotal + this.taxAmount;
+
+    this.subTotal = Number(this.subTotal.toFixed(2));
+    this.taxAmount = Number(this.taxAmount.toFixed(2));
+    this.totalAmount = Number(this.totalAmount.toFixed(2));
   }
 
   clearCart(): void {
     this.cartItems = [];
     this.calculateInvoiceTotals();
+    this.cdr.detectChanges();
   }
+
 
   checkoutInvoice(): void {
     if (this.cartItems.length === 0) {
       alert('El carrito de compras está vacío. No hay artículos para facturar.');
       return;
     }
-
+    const currentEmployeeId = Number(this.authService.currentUser()?.id || 0);
+    console.log('ID del empleado actual:', currentEmployeeId);
+    const translatedPaymentMethod = 
+    this.paymentMethod === 'EFECTIVO' ? 'Cash' :
+    this.paymentMethod === 'TARJETA' ? 'Card' : 
+    this.paymentMethod === 'TRANSFERENCIA' ? 'Transfer' : 'Cash';
     const finalInvoicePayload: CreateInvoiceDto = {
-      customerId: 1,
-      employeeId: 2,
-      paymentMethod: this.paymentMethod,
-      details: this.cartItems
+      CustomerId: 1,
+      EmployeeId: currentEmployeeId,
+      PaymentMethod: translatedPaymentMethod as any,
+
+      SubTotalAmount: Number(this.subTotal.toFixed(2)),
+      TaxAmount: Number(this.taxAmount.toFixed(2)),
+      TotalBilled: Number(this.totalAmount.toFixed(2)),
+
+      Details: this.cartItems.map(item => ({
+        ProductId: item.ProductId,
+        ProductName: item.ProductName,
+        ProductCode: item.ProductCode,
+        Quantity: Number(item.Quantity),
+        UnitPrice: Number(item.UnitPrice),
+        DiscountAmount: Number(item.DiscountAmount || 0),
+        LineTotal: Number(item.LineTotal),
+
+        PriceBilled: Number(item.UnitPrice),
+        TaxRate: this.taxRate * 100
+      }))
     };
 
     this.billingService.createInvoice(finalInvoicePayload).subscribe({
       next: (response) => {
-  
-        if (response.success) {
+        console.log('Respuesta de la API de facturación:', response);
+        if (response?.success !== false) {
+          this.clearCart();
           alert('¡Venta procesada con éxito! Stock rebajado en Kárdex y factura asentada contablemente.');
-          this.clearCart(); 
         } else {
-          alert('Error en transacciones de SQL Server: ' + response.error);
+          alert('Error en transacciones de SQL Server: ' + (response.error || response.message || 'No se pudo procesar la venta.'));
         }
       },
       error: (err) => {

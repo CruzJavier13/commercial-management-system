@@ -784,7 +784,7 @@ CREATE TYPE bil.InvoiceDetailType AS TABLE
 );
 GO
 
-CREATE PROCEDURE bil.sp_Invoice_Insert
+CREATE OR ALTER PROCEDURE bil.sp_Invoice_Insert
     @InvoiceNumber VARCHAR(50),
     @CustomerId INT,
     @EmployeeId INT,
@@ -799,8 +799,8 @@ BEGIN
     SET NOCOUNT ON;
     BEGIN TRANSACTION;
     BEGIN TRY
-        INSERT INTO bil.Invoices (InvoiceNumber, CustomerId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate)
-        VALUES (@InvoiceNumber, @CustomerId, @TaxAmount, @SubTotalAmount, @TotalBilled, @PaymentMethod, @InvoiceDate);
+        INSERT INTO bil.Invoices (InvoiceNumber, CustomerId, EmployeeId, TaxAmount, SubTotalAmount, TotalBilled, PaymentMethod, InvoiceDate)
+        VALUES (@InvoiceNumber, @CustomerId, @EmployeeId, @TaxAmount, @SubTotalAmount, @TotalBilled, @PaymentMethod, @InvoiceDate);
 
         DECLARE @NewInvoiceId INT = SCOPE_IDENTITY();
 
@@ -817,7 +817,7 @@ BEGIN
 END;
 GO
 
-CREATE PROCEDURE bil.sp_Invoice_Update
+CREATE OR ALTER PROCEDURE bil.sp_Invoice_Update
     @Id INT,
     @InvoiceNumber VARCHAR(50),
     @CustomerId INT,

@@ -59,7 +59,8 @@ namespace Mod.Billing.Application.UseCase
                     ProductId = detailDto.ProductId,
                     Quantity = detailDto.Quantity,
                     PriceBilled = detailDto.PriceBilled,
-                    TaxRate = detailDto.TaxRate
+                    TaxRate = detailDto.TaxRate,
+                    LineTotal = detailDto.Quantity * detailDto.PriceBilled
                 };
 
                 invoice.Details.Add(detail);

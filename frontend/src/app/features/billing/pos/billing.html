@@ -77,21 +77,21 @@
       </div>
 
       <!-- Fila de Artículo en Carrito -->
-      @for (item of cartItems; track item.id) { 
+      @for (item of cartItems; track item.ProductId) {
         <div class="flex items-center justify-between gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 animate-fadeIn">
           <div class="flex-1 min-w-0">
-            <h5 class="text-xs font-bold text-slate-800 truncate" [title]="item.productName">{{ item.productName }}</h5>
-            <span class="text-[11px] text-slate-400 font-medium">C${{ item.unitPrice | number:'1.2-2' }} c/u</span>
+            <h5 class="text-xs font-bold text-slate-800 truncate" [title]="item.ProductName">{{ item.ProductName }}</h5>
+            <span class="text-[11px] text-slate-400 font-medium">C${{ item.UnitPrice | number:'1.2-2' }} c/u</span>
           </div>
           <!-- Controladores de Cantidades -->
           <div class="flex items-center gap-2">
             <button (click)="updateQuantity(item, -1)" class="w-6 h-6 rounded-lg bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 flex items-center justify-center font-bold text-sm">-</button>
-            <span class="text-xs font-bold text-slate-800 w-4 text-center">{{ item.quantity }}</span>
+            <span class="text-xs font-bold text-slate-800 w-4 text-center">{{ item.Quantity }}</span>
             <button (click)="updateQuantity(item, 1)" class="w-6 h-6 rounded-lg bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 flex items-center justify-center font-bold text-sm">+</button>
           </div>
           <!-- Total de Línea -->
           <div class="text-right min-w-[60px]">
-            <span class="text-xs font-bold text-slate-900">C${{ item.lineTotal | number:'1.2-2' }}</span>
+            <span class="text-xs font-bold text-slate-900">C${{ item.LineTotal | number:'1.2-2' }}</span>
           </div>
         </div>
       }

@@ -160,6 +160,8 @@ namespace Mod.Billing.Infrastructure.Persistence
             };
             command.Parameters.Add(pDetails);
 
+            Console.WriteLine($"[Invoice payload] SubTotalAmount={entity.SubTotalAmount}, TaxAmount={entity.TaxAmount}, TotalBilled={entity.TotalBilled}");
+
             await command.ExecuteNonQueryAsync();
         }
 

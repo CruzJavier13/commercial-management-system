@@ -1,32 +1,40 @@
 export interface InvoiceDetailDto {
   id?: number;
-  productId: number;
-  productName: string;      
-  productCode: string;
-  quantity: number;
-  unitPrice: number;
-  discountAmount: number;
-  lineTotal: number;
+  ProductId: number;
+  ProductName: string;      
+  ProductCode: string;
+  Quantity: number;
+  UnitPrice: number;
+  DiscountAmount: number;
+  LineTotal: number;
+
+  PriceBilled?: number; 
+  TaxRate?: number;  
 }
 
 export interface GetInvoiceDto {
   id: number;
-  invoiceNumber: string;    
-  customerId: number;
-  customerName: string;
-  employeeId: number;       
-  employeeName: string;
-  subTotal: number;
-  taxAmount: number;      
-  totalAmount: number;
-  paymentMethod: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
-  createdAt: string;
-  details: InvoiceDetailDto[]; 
+  InvoiceNumber: string;    
+  CustomerId: number;
+  CustomerName: string;
+  EmployeeId: number;       
+  EmployeeName: string;
+  SubTotal: number;
+  TaxAmount: number;      
+  TotalAmount: number;
+  PaymentMethod: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' | 'Cash' | 'Card' | 'Transfer';
+  CreatedAt: string;
+  Details: InvoiceDetailDto[]; 
 }
 
 export interface CreateInvoiceDto {
-  customerId: number;
-  employeeId: number;
-  paymentMethod: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
-  details: InvoiceDetailDto[];
+  CustomerId: number;
+  EmployeeId: number;
+  PaymentMethod: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
+
+  SubTotalAmount: number;
+  TaxAmount: number;
+  TotalBilled: number;
+  
+  Details: InvoiceDetailDto[];
 }

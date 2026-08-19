@@ -33,10 +33,16 @@ export class BillingService {
   }
 
   createInvoice(invoiceDto: CreateInvoiceDto): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(this.apiUrl, invoiceDto).pipe(
-      map(response => {
+    return this.http.post<ApiResponse<any> | null>(this.apiUrl, invoiceDto, {
+      observe: 'response'
+    }).pipe(
+      map(httpResponse => {
         this.getInvoiceHistory().subscribe();
-        return response;
+        return httpResponse.body ?? {
+          success: httpResponse.ok,
+          data: null,
+          message: 'Venta procesada correctamente.'
+        };
       })
     );
   }
